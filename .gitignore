@@ -43,3 +43,4 @@ client/server/build/
 client/server/.gradle/
 client/server/.idea/
 client/server/out/
+client/maven-client/target/
