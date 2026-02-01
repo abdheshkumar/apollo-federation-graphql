@@ -22,7 +22,7 @@ tasks {
     val mavenEnvironmentVariables =
         mapOf(
             "graphqlKotlinVersion" to "8.8.1",
-            "kotlinJvmTarget" to "17",
+            "kotlinJvmTarget" to "21",
             "kotlinVersion" to "2.1.0",
             "kotlinxCoroutinesVersion" to "1.10.1",
             "reactorVersion" to "3.7.1",
@@ -49,14 +49,14 @@ sourceSets {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "21"
         freeCompilerArgs = listOf("-Xjsr305=strict")
     }
     dependsOn("mavenBuild")
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
 
 tasks.test {

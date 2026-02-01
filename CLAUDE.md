@@ -8,7 +8,7 @@ This is a multi-module GraphQL Kotlin examples repository demonstrating various 
 
 **Key Library**: graphql-kotlin v8.8.1
 **Build System**: Gradle 8.8 with Kotlin DSL
-**JVM Target**: Java 17
+**JVM Target**: Java 21
 
 ## Build Commands
 
@@ -76,7 +76,7 @@ The repository uses a flat Gradle project structure with directory mapping:
 - Root `build.gradle.kts` declares plugins with `apply false`
 - Version catalog in `gradle/libs.versions.toml` for dependency management
 - Each module directly applies plugins and configures dependencies
-- All modules include common configuration: Kotlin JVM 17, ktlint enforcement
+- All modules include common configuration: Kotlin JVM 21, ktlint enforcement
 
 **Important**: Code quality is enforced via ktlint. Build will fail on style violations.
 
@@ -150,7 +150,7 @@ Client examples depend on `server-client-example` to be running. Start server fi
 ## GitHub Actions
 
 CI workflow in `.github/workflows/gradle.yml`:
-- Runs on Ubuntu with Java 17 (Temurin)
+- Runs on Ubuntu with Java 21 (Temurin)
 - Executes `./gradlew build`
 - Includes dependency submission for Dependabot
-- Gradle wrapper JAR is committed (exception in `.gitignore`)
+- Gradle and Maven wrapper JARs are committed (exceptions in `.gitignore`)
