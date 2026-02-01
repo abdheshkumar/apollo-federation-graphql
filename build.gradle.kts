@@ -12,10 +12,3 @@ allprojects {
         mavenCentral()
     }
 }
-
-subprojects {
-    // Disable ktlint from build task (keep it available for manual runs)
-    tasks.matching { it.name.startsWith("ktlint") }.configureEach {
-        enabled = false
-    }
-}

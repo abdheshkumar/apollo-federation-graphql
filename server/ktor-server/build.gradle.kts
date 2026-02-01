@@ -52,9 +52,9 @@ tasks.jar {
     enabled = false
 }
 
-
-
 ktlint {
-    version.set(libs.versions.ktlint.core.get())
+    version.set(
+        libs.versions.ktlint.core
+            .get(),
+    )
 }
-

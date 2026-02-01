@@ -28,10 +28,10 @@ class CompanyDataLoader(
     private val service: CompanyService,
 ) : KotlinDataLoader<Int, Company> {
     companion object {
-        const val name = "CompanyDataLoader"
+        const val NAME = "CompanyDataLoader"
     }
 
-    override val dataLoaderName = name
+    override val dataLoaderName = NAME
 
     override fun getDataLoader(graphQLContext: GraphQLContext) =
         DataLoaderFactory.newDataLoader<Int, Company> { ids ->

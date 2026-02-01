@@ -21,5 +21,6 @@ package com.expediagroup.graphql.examples.client.maven
 data class ProductEntityRepresentation(
     val id: String,
 ) {
+    @Suppress("ktlint:standard:backing-property-naming")
     val __typename: String = "Product"
 }
