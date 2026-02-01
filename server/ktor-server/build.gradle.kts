@@ -4,9 +4,8 @@ description = "An Example GraphQL service served by Ktor"
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.graphql.kotlin)
     alias(libs.plugins.ktlint)
-    alias(libs.plugins.detekt)
+    alias(libs.plugins.graphql.kotlin)
     application
 }
 
@@ -53,10 +52,9 @@ tasks.jar {
     enabled = false
 }
 
+
+
 ktlint {
     version.set(libs.versions.ktlint.core.get())
 }
 
-detekt {
-    toolVersion = libs.versions.detekt.get()
-}

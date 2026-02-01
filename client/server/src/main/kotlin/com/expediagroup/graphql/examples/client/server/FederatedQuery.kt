@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class FederatedQuery : Query {
-
     fun product(id: ID) = Product.byID(id)
 }
 
@@ -34,22 +33,32 @@ data class Product(
     @ProvidesDirective(FieldSet("totalProductsCreated"))
     val createdBy: User? = null,
     @TagDirective("internal")
-    val notes: String? = null
+    val notes: String? = null,
 ) {
     companion object {
         fun byID(id: ID) = PRODUCTS.find { it.id.value == id.value }
-        private fun bySkuAndPackage(sku: String, pkg: String) = PRODUCTS.find { it.sku == sku && it.pkg == pkg }
-        private fun bySkuAndVariation(sku: String, variationId: String) =
-            PRODUCTS.find { it.sku == sku && it.variation?.id?.value == variationId }
+
+        private fun bySkuAndPackage(
+            sku: String,
+            pkg: String,
+        ) = PRODUCTS.find { it.sku == sku && it.pkg == pkg }
+
+        private fun bySkuAndVariation(
+            sku: String,
+            variationId: String,
+        ) = PRODUCTS.find { it.sku == sku && it.variation?.id?.value == variationId }
 
         fun byReference(ref: Map<String, Any>): Product? {
             val id = ref["id"]?.toString()
             val sku = ref["sku"]?.toString()
             val pkg = ref["package"]?.toString()
             val variation = ref["variation"]
-            val variationId = if (variation is Map<*, *>) {
-                variation["id"].toString()
-            } else null
+            val variationId =
+                if (variation is Map<*, *>) {
+                    variation["id"].toString()
+                } else {
+                    null
+                }
 
             return when {
                 id != null -> byID(ID(id))
@@ -61,35 +70,36 @@ data class Product(
     }
 }
 
-val PRODUCTS = listOf(
-    Product(
-        ID("apollo-federation"),
-        "federation",
-        "@apollo/federation",
-        ProductVariation(ID("OSS")),
-        ProductDimension("small", 1.0f),
-        User(email = "support@apollographql.com", name = "support", totalProductsCreated = 1337)
-    ),
-    Product(
-        ID("apollo-studio"),
-        "studio",
-        "",
-        ProductVariation(ID("platform")),
-        ProductDimension("small", 1.0f),
-        User(email = "support@apollographql.com", name = "support", totalProductsCreated = 1337)
+val PRODUCTS =
+    listOf(
+        Product(
+            ID("apollo-federation"),
+            "federation",
+            "@apollo/federation",
+            ProductVariation(ID("OSS")),
+            ProductDimension("small", 1.0f),
+            User(email = "support@apollographql.com", name = "support", totalProductsCreated = 1337),
+        ),
+        Product(
+            ID("apollo-studio"),
+            "studio",
+            "",
+            ProductVariation(ID("platform")),
+            ProductDimension("small", 1.0f),
+            User(email = "support@apollographql.com", name = "support", totalProductsCreated = 1337),
+        ),
     )
-)
 
 @ShareableDirective
 data class ProductDimension(
     val size: String? = null,
     val weight: Float? = null,
     @InaccessibleDirective
-    val unit: String? = null
+    val unit: String? = null,
 )
 
 data class ProductVariation(
-    val id: ID
+    val id: ID,
 )
 
 @KeyDirective(fields = FieldSet("email"))
@@ -99,7 +109,7 @@ data class User(
     @OverrideDirective(from = "users")
     val name: String,
     @ExternalDirective
-    val totalProductsCreated: Int? = null
+    val totalProductsCreated: Int? = null,
 )
 
 @Component
@@ -108,7 +118,7 @@ class ProductsResolver : FederatedTypeSuspendResolver<Product> {
 
     override suspend fun resolve(
         environment: DataFetchingEnvironment,
-        representation: Map<String, Any>
+        representation: Map<String, Any>,
     ): Product? = Product.byReference(representation)
 }
 
@@ -118,7 +128,7 @@ class UserResolver : FederatedTypeSuspendResolver<User> {
 
     override suspend fun resolve(
         environment: DataFetchingEnvironment,
-        representation: Map<String, Any>
+        representation: Map<String, Any>,
     ): User? {
         val email = representation["email"]?.toString() ?: throw RuntimeException("invalid entity reference")
         return User(email = email, name = "default", totalProductsCreated = 1337)

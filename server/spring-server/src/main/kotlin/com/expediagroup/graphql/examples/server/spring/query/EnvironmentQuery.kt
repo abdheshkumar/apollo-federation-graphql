@@ -27,14 +27,18 @@ class EnvironmentQuery : Query {
 
 data class NestedNode(
     val value: Int,
-    val parentValue: Int? = null
+    val parentValue: Int? = null,
 ) {
-    fun nested(environment: DataFetchingEnvironment, value: Int): NestedNode {
-        val parentValue: Int? = if (environment.executionStepInfo.hasParent()) {
-            environment.executionStepInfo.parent.getArgument("value")
-        } else {
-            null
-        }
+    fun nested(
+        environment: DataFetchingEnvironment,
+        value: Int,
+    ): NestedNode {
+        val parentValue: Int? =
+            if (environment.executionStepInfo.hasParent()) {
+                environment.executionStepInfo.parent.getArgument("value")
+            } else {
+                null
+            }
 
         return NestedNode(value, parentValue)
     }

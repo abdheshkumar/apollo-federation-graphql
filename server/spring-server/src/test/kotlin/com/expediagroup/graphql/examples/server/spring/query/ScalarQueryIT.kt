@@ -32,34 +32,40 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class ScalarQueryIT(@Autowired private val testClient: WebTestClient) {
-
+class ScalarQueryIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @Test
     fun `verify generateRandomUUID query`() {
         val query = "generateRandomUUID"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query }")
             .exchange()
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query").isNotEmpty
+            .jsonPath("$DATA_JSON_PATH.$query")
+            .isNotEmpty
     }
 
     @Test
     fun `verify findPersonById query`() {
         val query = "findPersonById"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query(id: \"1\") { id, name } }")
             .exchange()
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.id").isEqualTo("1")
-            .jsonPath("$DATA_JSON_PATH.$query.name").isEqualTo("Nelson")
+            .jsonPath("$DATA_JSON_PATH.$query.id")
+            .isEqualTo("1")
+            .jsonPath("$DATA_JSON_PATH.$query.name")
+            .isEqualTo("Nelson")
     }
 }

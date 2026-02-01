@@ -26,20 +26,23 @@ import org.springframework.context.annotation.Bean
 
 @SpringBootApplication
 class ReviewsApplication {
-
     @Bean
-    fun productEntityResolver(): FederatedTypeResolver = object : FederatedTypeSuspendResolver<Product> {
-        override val typeName: String = "Product"
+    fun productEntityResolver(): FederatedTypeResolver =
+        object : FederatedTypeSuspendResolver<Product> {
+            override val typeName: String = "Product"
 
-        override suspend fun resolve(environment: DataFetchingEnvironment, representation: Map<String, Any>): Product? {
-            val id = representation["id"]?.toString()
-            return if (id != null) {
-                Product(ID(id))
-            } else {
-                null
+            override suspend fun resolve(
+                environment: DataFetchingEnvironment,
+                representation: Map<String, Any>,
+            ): Product? {
+                val id = representation["id"]?.toString()
+                return if (id != null) {
+                    Product(ID(id))
+                } else {
+                    null
+                }
             }
         }
-    }
 }
 
 @Suppress("SpreadOperator")

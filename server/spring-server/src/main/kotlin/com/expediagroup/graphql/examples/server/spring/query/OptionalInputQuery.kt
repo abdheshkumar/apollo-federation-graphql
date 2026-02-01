@@ -22,19 +22,20 @@ import org.springframework.stereotype.Component
 
 @Component
 class OptionalInputQuery : Query {
-
     data class SimpleArgument(
         val id: Int,
-        val name: String
+        val name: String,
     )
 
-    fun optionalScalarInput(input: OptionalInput<String>): String = when (input) {
-        is OptionalInput.Undefined -> "input scalar was not specified"
-        is OptionalInput.Defined<String> -> "input scalar value: ${input.value}"
-    }
+    fun optionalScalarInput(input: OptionalInput<String>): String =
+        when (input) {
+            is OptionalInput.Undefined -> "input scalar was not specified"
+            is OptionalInput.Defined<String> -> "input scalar value: ${input.value}"
+        }
 
-    fun optionaListInputObject(input: OptionalInput<List<SimpleArgument>>): String = when (input) {
-        is OptionalInput.Undefined -> "input was not specified"
-        is OptionalInput.Defined -> "input value: ${input.value}"
-    }
+    fun optionaListInputObject(input: OptionalInput<List<SimpleArgument>>): String =
+        when (input) {
+            is OptionalInput.Undefined -> "input was not specified"
+            is OptionalInput.Defined -> "input value: ${input.value}"
+        }
 }

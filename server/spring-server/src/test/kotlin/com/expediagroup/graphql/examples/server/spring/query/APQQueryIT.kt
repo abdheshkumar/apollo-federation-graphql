@@ -29,57 +29,68 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.web.reactive.server.WebTestClient
 
 @SpringBootTest(
-    properties = ["graphql.automaticPersistedQueries.enabled=true"]
+    properties = ["graphql.automaticPersistedQueries.enabled=true"],
 )
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class APQQueryIT(@Autowired private val testClient: WebTestClient) {
-
+class APQQueryIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @Test
     @Disabled("Pre-existing issue: GET request with APQ returns 400 BAD_REQUEST instead of JSON error response")
     fun `verify GET persisted query with hash only followed by POST with hash`() {
         val query = "simpleDeprecatedQuery"
 
-        testClient.get()
+        testClient
+            .get()
             .uri { builder ->
-                builder.path("/graphql")
+                builder
+                    .path("/graphql")
                     .queryParam("extensions", "{extension}")
-                    .build("""{"persistedQuery":{"version":1,"sha256Hash":"aee64e0a941589ff06b717d4930405f3eafb089e687bef6ece5719ea6a4e7f35"}}""")
-            }
-            .exchange()
-            .expectBody().json(
+                    .build(
+                        """{"persistedQuery":{"version":1,"sha256Hash":"aee64e0a941589ff06b717d4930405f3eafb089e687bef6ece5719ea6a4e7f35"}}""",
+                    )
+            }.exchange()
+            .expectBody()
+            .json(
                 """
+                {
+                  errors: [
                     {
-                      errors: [
-                        {
-                          message: "PersistedQueryNotFound"
-                        }
-                      ]
+                      message: "PersistedQueryNotFound"
                     }
-                """.trimIndent()
+                  ]
+                }
+                """.trimIndent(),
             )
 
         val expectedData = "false"
 
-        testClient.post()
+        testClient
+            .post()
             .uri { builder ->
-                builder.path("/graphql")
+                builder
+                    .path("/graphql")
                     .queryParam("extensions", "{extension}")
-                    .build("""{"persistedQuery":{"version":1,"sha256Hash":"aee64e0a941589ff06b717d4930405f3eafb089e687bef6ece5719ea6a4e7f35"}}""")
-            }
-            .accept(APPLICATION_JSON)
+                    .build(
+                        """{"persistedQuery":{"version":1,"sha256Hash":"aee64e0a941589ff06b717d4930405f3eafb089e687bef6ece5719ea6a4e7f35"}}""",
+                    )
+            }.accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query }")
             .exchange()
             .verifyData(query, expectedData)
 
-        testClient.get()
+        testClient
+            .get()
             .uri { builder ->
-                builder.path("/graphql")
+                builder
+                    .path("/graphql")
                     .queryParam("extensions", "{extension}")
-                    .build("""{"persistedQuery":{"version":1,"sha256Hash":"aee64e0a941589ff06b717d4930405f3eafb089e687bef6ece5719ea6a4e7f35"}}""")
-            }
-            .exchange()
+                    .build(
+                        """{"persistedQuery":{"version":1,"sha256Hash":"aee64e0a941589ff06b717d4930405f3eafb089e687bef6ece5719ea6a4e7f35"}}""",
+                    )
+            }.exchange()
             .verifyData(query, expectedData)
     }
 }

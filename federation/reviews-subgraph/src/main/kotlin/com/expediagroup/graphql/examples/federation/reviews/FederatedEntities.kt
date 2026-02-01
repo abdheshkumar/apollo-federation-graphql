@@ -20,19 +20,25 @@ import com.expediagroup.graphql.generator.federation.directives.FieldSet
 import com.expediagroup.graphql.generator.federation.directives.KeyDirective
 import com.expediagroup.graphql.generator.scalars.ID
 
-private val reviews: Map<ID, List<Review>> = mapOf(
-    ID("2") to listOf(Review(ID("1020"), "Very cramped :( Do not recommend.", 2), Review(ID("1021"), "Got me to the Moon!", 4)),
-    ID("3") to listOf(Review(ID("1030"), 3)),
-    ID("4") to listOf(Review(ID("1040"), 5), Review(ID("1041"), "Reusable!", 5), Review(ID("1042"), 5)),
-    ID("5") to listOf(Review(ID("1050"), "Amazing! Would Fly Again!", 5), Review(ID("1051"), 5))
-)
+private val reviews: Map<ID, List<Review>> =
+    mapOf(
+        ID("2") to listOf(Review(ID("1020"), "Very cramped :( Do not recommend.", 2), Review(ID("1021"), "Got me to the Moon!", 4)),
+        ID("3") to listOf(Review(ID("1030"), 3)),
+        ID("4") to listOf(Review(ID("1040"), 5), Review(ID("1041"), "Reusable!", 5), Review(ID("1042"), 5)),
+        ID("5") to listOf(Review(ID("1050"), "Amazing! Would Fly Again!", 5), Review(ID("1051"), 5)),
+    )
 
 @KeyDirective(fields = FieldSet(value = "id"))
-data class Product(val id: ID) {
-
+data class Product(
+    val id: ID,
+) {
     fun reviews(): List<Review> = reviews[id] ?: emptyList()
 }
 
-data class Review(val id: ID, val text: String? = null, val starRating: Int) {
+data class Review(
+    val id: ID,
+    val text: String? = null,
+    val starRating: Int,
+) {
     constructor(id: ID, starRating: Int) : this(id, null, starRating)
 }

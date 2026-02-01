@@ -26,7 +26,6 @@ import org.springframework.stereotype.Component
  */
 @Component
 class SimpleMutation : Mutation {
-
     private val data: MutableList<String> = mutableListOf()
 
     @GraphQLDescription("add value to a list and return resulting list")

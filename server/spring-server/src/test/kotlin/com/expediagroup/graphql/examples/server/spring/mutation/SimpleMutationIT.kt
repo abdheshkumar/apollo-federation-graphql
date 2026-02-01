@@ -33,35 +33,45 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class SimpleMutationIT(@Autowired private val testClient: WebTestClient) {
-
+class SimpleMutationIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @Test
     fun `verify addToList query`() {
         val query = "addToList"
         val firstEntry = "first entry"
         val secondEntry = "second entry"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("mutation { $query(entry: \"$firstEntry\") }")
             .exchange()
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query").isArray
-            .jsonPath("$DATA_JSON_PATH.$query").value(Matchers.hasSize<Int>(1))
-            .jsonPath("$DATA_JSON_PATH.$query.[0]").isEqualTo(firstEntry)
+            .jsonPath("$DATA_JSON_PATH.$query")
+            .isArray
+            .jsonPath("$DATA_JSON_PATH.$query")
+            .value(Matchers.hasSize<Int>(1))
+            .jsonPath("$DATA_JSON_PATH.$query.[0]")
+            .isEqualTo(firstEntry)
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("mutation { $query(entry: \"$secondEntry\") }")
             .exchange()
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query").isArray
-            .jsonPath("$DATA_JSON_PATH.$query").value(Matchers.hasSize<Int>(2))
-            .jsonPath("$DATA_JSON_PATH.$query.[0]").isEqualTo(firstEntry)
-            .jsonPath("$DATA_JSON_PATH.$query.[1]").isEqualTo(secondEntry)
+            .jsonPath("$DATA_JSON_PATH.$query")
+            .isArray
+            .jsonPath("$DATA_JSON_PATH.$query")
+            .value(Matchers.hasSize<Int>(2))
+            .jsonPath("$DATA_JSON_PATH.$query.[0]")
+            .isEqualTo(firstEntry)
+            .jsonPath("$DATA_JSON_PATH.$query.[1]")
+            .isEqualTo(secondEntry)
     }
 }

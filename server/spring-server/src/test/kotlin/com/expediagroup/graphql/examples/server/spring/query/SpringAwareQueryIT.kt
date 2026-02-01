@@ -32,21 +32,26 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class SpringAwareQueryIT(@Autowired private val testClient: WebTestClient) {
-
+class SpringAwareQueryIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @Test
     fun `verify widgetById query`() {
         val query = "widgetById"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query(id: 2) { value, multiplyValueBy(multiplier: 5), deprecatedValue } }")
             .exchange()
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.value").isEqualTo("2")
-            .jsonPath("$DATA_JSON_PATH.$query.multiplyValueBy").isEqualTo("10")
-            .jsonPath("$DATA_JSON_PATH.$query.deprecatedValue").isEqualTo("2")
+            .jsonPath("$DATA_JSON_PATH.$query.value")
+            .isEqualTo("2")
+            .jsonPath("$DATA_JSON_PATH.$query.multiplyValueBy")
+            .isEqualTo("10")
+            .jsonPath("$DATA_JSON_PATH.$query.deprecatedValue")
+            .isEqualTo("2")
     }
 }

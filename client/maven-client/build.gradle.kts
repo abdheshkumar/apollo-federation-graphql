@@ -1,12 +1,11 @@
-import java.time.Duration
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.time.Duration
 
 description = "Example usage of Maven plugin to generate GraphQL Kotlin Client"
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktlint)
-    alias(libs.plugins.detekt)
 }
 
 dependencies {
@@ -19,14 +18,15 @@ dependencies {
 }
 
 tasks {
-    /* Gradle is used to invoke maven wrapper */
-    val mavenEnvironmentVariables = mapOf(
-        "graphqlKotlinVersion" to "8.8.1",
-        "kotlinJvmTarget" to "17",
-        "kotlinVersion" to "2.1.0",
-        "kotlinxCoroutinesVersion" to "1.10.1",
-        "reactorVersion" to "3.7.1"
-    )
+    // Gradle is used to invoke maven wrapper
+    val mavenEnvironmentVariables =
+        mapOf(
+            "graphqlKotlinVersion" to "8.8.1",
+            "kotlinJvmTarget" to "17",
+            "kotlinVersion" to "2.1.0",
+            "kotlinxCoroutinesVersion" to "1.10.1",
+            "reactorVersion" to "3.7.1",
+        )
     val mavenBuild by register("mavenBuild") {
         timeout.set(Duration.ofSeconds(500))
         doLast {
@@ -67,6 +67,8 @@ tasks.jar {
     enabled = false
 }
 
+
+
 ktlint {
     version.set(libs.versions.ktlint.core.get())
     filter {
@@ -74,6 +76,3 @@ ktlint {
     }
 }
 
-detekt {
-    toolVersion = libs.versions.detekt.get()
-}

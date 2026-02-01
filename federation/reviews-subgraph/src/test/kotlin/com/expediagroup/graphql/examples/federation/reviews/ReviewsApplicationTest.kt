@@ -26,26 +26,29 @@ import org.springframework.test.web.reactive.server.WebTestClient
 
 @SpringBootTest
 @AutoConfigureWebTestClient
-class ReviewsApplicationTest(@Autowired val testClient: WebTestClient) {
-
+class ReviewsApplicationTest(
+    @Autowired val testClient: WebTestClient,
+) {
     @Test
     fun `verifies product query`() {
-        val query = """
-          query Entities(${"$"}representations: [_Any!]!) {
-            _entities(representations: ${"$"}representations) {
-              ...on Product {
-                id
-                reviews {
+        val query =
+            """
+            query Entities(${"$"}representations: [_Any!]!) {
+              _entities(representations: ${"$"}representations) {
+                ...on Product {
                   id
-                  text
-                  starRating
+                  reviews {
+                    id
+                    text
+                    starRating
+                  }
                 }
               }
             }
-          }
-        """.trimIndent()
+            """.trimIndent()
 
-        testClient.post()
+        testClient
+            .post()
             .uri("/graphql")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
@@ -53,21 +56,31 @@ class ReviewsApplicationTest(@Autowired val testClient: WebTestClient) {
                 GraphQLRequest(
                     operationName = "Entities",
                     query = query,
-                    variables = mapOf("representations" to mapOf("__typename" to "Product", "id" to "5"))
-                )
-            )
-            .exchange()
-            .expectStatus().isOk
+                    variables = mapOf("representations" to mapOf("__typename" to "Product", "id" to "5")),
+                ),
+            ).exchange()
+            .expectStatus()
+            .isOk
             .expectBody()
-            .jsonPath("\$.data._entities").exists()
-            .jsonPath("\$.data._entities").isArray
-            .jsonPath("\$.errors").doesNotExist()
-            .jsonPath("\$.data._entities[0]").exists()
-            .jsonPath("\$.data._entities[0].id").isEqualTo("5")
-            .jsonPath("\$.data._entities[0].reviews").exists()
-            .jsonPath("\$.data._entities[0].reviews").isArray
-            .jsonPath("\$.data._entities[0].reviews[0]").exists()
-            .jsonPath("\$.data._entities[0].reviews[0].text").isEqualTo("Amazing! Would Fly Again!")
-            .jsonPath("\$.data._entities[0].reviews[0].starRating").isEqualTo(5)
+            .jsonPath("\$.data._entities")
+            .exists()
+            .jsonPath("\$.data._entities")
+            .isArray
+            .jsonPath("\$.errors")
+            .doesNotExist()
+            .jsonPath("\$.data._entities[0]")
+            .exists()
+            .jsonPath("\$.data._entities[0].id")
+            .isEqualTo("5")
+            .jsonPath("\$.data._entities[0].reviews")
+            .exists()
+            .jsonPath("\$.data._entities[0].reviews")
+            .isArray
+            .jsonPath("\$.data._entities[0].reviews[0]")
+            .exists()
+            .jsonPath("\$.data._entities[0].reviews[0].text")
+            .isEqualTo("Amazing! Would Fly Again!")
+            .jsonPath("\$.data._entities[0].reviews[0].starRating")
+            .isEqualTo(5)
     }
 }

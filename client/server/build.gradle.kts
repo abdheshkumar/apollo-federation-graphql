@@ -2,10 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.ktlint)
     alias(libs.plugins.kotlin.spring)
     alias(libs.plugins.spring.boot)
-    alias(libs.plugins.ktlint)
-    alias(libs.plugins.detekt)
 }
 
 dependencies {
@@ -36,10 +35,9 @@ tasks.jar {
     enabled = false
 }
 
+
+
 ktlint {
     version.set(libs.versions.ktlint.core.get())
 }
 
-detekt {
-    toolVersion = libs.versions.detekt.get()
-}

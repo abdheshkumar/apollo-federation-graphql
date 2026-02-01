@@ -23,13 +23,13 @@ import graphql.schema.DataFetcherFactories
 import graphql.schema.GraphQLFieldDefinition
 
 class LowercaseSchemaDirectiveWiring : KotlinSchemaDirectiveWiring {
-
     override fun onField(environment: KotlinFieldDirectiveEnvironment): GraphQLFieldDefinition {
         val field = environment.element
         val originalDataFetcher: DataFetcher<*> = environment.getDataFetcher()
-        val lowerCaseFetcher = DataFetcherFactories.wrapDataFetcher(originalDataFetcher) { _, value ->
-            value.toString().lowercase()
-        }
+        val lowerCaseFetcher =
+            DataFetcherFactories.wrapDataFetcher(originalDataFetcher) { _, value ->
+                value.toString().lowercase()
+            }
         environment.setDataFetcher(lowerCaseFetcher)
         return field
     }

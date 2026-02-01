@@ -22,12 +22,15 @@ import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 interface BasicUnion
 
 @GraphQLDescription("Some basic description")
-data class BasicObject(val id: Int, @GraphQLDescription("Object name") val name: String) : BasicUnion
+data class BasicObject(
+    val id: Int,
+    @GraphQLDescription("Object name") val name: String,
+) : BasicUnion
 
 @GraphQLDescription(
     """Multi line description of a complex type.
         This is a second line of the paragraph.
-        This is final line of the description."""
+        This is final line of the description.""",
 )
 data class ComplexObject(
     @GraphQLDescription("Some unique identifier")
@@ -36,11 +39,11 @@ data class ComplexObject(
     val name: String,
     @GraphQLDescription(
         """Optional value
-            |Second line of the description"""
+            |Second line of the description""",
     )
     val optional: String? = null,
     @GraphQLDescription("Some additional details")
-    val details: DetailsObject
+    val details: DetailsObject,
 ) : BasicUnion
 
 @GraphQLDescription("Inner type object description")
@@ -50,5 +53,5 @@ data class DetailsObject(
     @GraphQLDescription("Boolean flag")
     val flag: Boolean,
     @GraphQLDescription("Actual detail value")
-    val value: String
+    val value: String,
 )

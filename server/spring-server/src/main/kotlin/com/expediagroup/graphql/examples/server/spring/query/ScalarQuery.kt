@@ -30,7 +30,6 @@ import java.util.UUID
  */
 @Component
 class ScalarQuery : Query {
-
     @GraphQLDescription("generates random UUID")
     fun generateRandomUUID() = UUID.randomUUID()
 

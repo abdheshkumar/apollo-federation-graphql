@@ -30,8 +30,9 @@ import kotlin.random.Random
  * This is the top level query
  */
 @Component
-class TopLevelBeanFactoryQuery : Query, BeanFactoryAware {
-
+class TopLevelBeanFactoryQuery :
+    Query,
+    BeanFactoryAware {
     private lateinit var beanFactory: BeanFactory
 
     @GraphQLIgnore
@@ -39,7 +40,8 @@ class TopLevelBeanFactoryQuery : Query, BeanFactoryAware {
         this.beanFactory = beanFactory
     }
 
-    fun topLevelBeanFactory(topLevelValue: String): SecondLevelBeanFactoryQuery = beanFactory.getBean(SecondLevelBeanFactoryQuery::class.java, topLevelValue)
+    fun topLevelBeanFactory(topLevelValue: String): SecondLevelBeanFactoryQuery =
+        beanFactory.getBean(SecondLevelBeanFactoryQuery::class.java, topLevelValue)
 }
 
 /**
@@ -49,18 +51,20 @@ class TopLevelBeanFactoryQuery : Query, BeanFactoryAware {
 @Component
 @Scope("prototype")
 class SecondLevelBeanFactoryQuery
-@Autowired(required = false)
-constructor(internal val topLevelValue: String) : BeanFactoryAware {
+    @Autowired(required = false)
+    constructor(
+        internal val topLevelValue: String,
+    ) : BeanFactoryAware {
+        private lateinit var beanFactory: BeanFactory
 
-    private lateinit var beanFactory: BeanFactory
+        @GraphQLIgnore
+        override fun setBeanFactory(beanFactory: BeanFactory) {
+            this.beanFactory = beanFactory
+        }
 
-    @GraphQLIgnore
-    override fun setBeanFactory(beanFactory: BeanFactory) {
-        this.beanFactory = beanFactory
+        fun secondLevel(secondLevelValue: String): ThirdLevelBeanFactoryQuery =
+            beanFactory.getBean(ThirdLevelBeanFactoryQuery::class.java, topLevelValue, secondLevelValue)
     }
-
-    fun secondLevel(secondLevelValue: String): ThirdLevelBeanFactoryQuery = beanFactory.getBean(ThirdLevelBeanFactoryQuery::class.java, topLevelValue, secondLevelValue)
-}
 
 /**
  * This is the third level object that is created at execution time of the
@@ -69,18 +73,17 @@ constructor(internal val topLevelValue: String) : BeanFactoryAware {
 @Component
 @Scope("prototype")
 class ThirdLevelBeanFactoryQuery
-@Autowired(required = false)
-constructor(
-    internal val topLevelValue: String,
-    internal val secondLevelValue: String
-) {
+    @Autowired(required = false)
+    constructor(
+        internal val topLevelValue: String,
+        internal val secondLevelValue: String,
+    ) {
+        @Autowired
+        private lateinit var service: ExampleExternalService
 
-    @Autowired
-    private lateinit var service: ExampleExternalService
-
-    fun printMessage(thirdLevelValue: String): String =
-        "topLevelValue=$topLevelValue, secondLevelValue=$secondLevelValue, thirdLevelValue=$thirdLevelValue, serviceValue=${service.getData()}"
-}
+        fun printMessage(thirdLevelValue: String): String =
+            "topLevelValue=$topLevelValue, secondLevelValue=$secondLevelValue, thirdLevelValue=$thirdLevelValue, serviceValue=${service.getData()}"
+    }
 
 /**
  * Spring service that represents some other component that is not

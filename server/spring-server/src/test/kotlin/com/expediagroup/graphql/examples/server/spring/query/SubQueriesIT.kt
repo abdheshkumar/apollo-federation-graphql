@@ -32,19 +32,22 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class SubQueriesIT(@Autowired private val testClient: WebTestClient) {
-
+class SubQueriesIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @Test
     fun `verify main query`() {
         val query = "main"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query { secondary } }")
             .exchange()
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.secondary").isEqualTo("secondary")
+            .jsonPath("$DATA_JSON_PATH.$query.secondary")
+            .isEqualTo("secondary")
     }
 }

@@ -56,23 +56,29 @@ fun Application.graphQLModule() {
     install(GraphQL) {
         schema {
             packages = listOf("com.expediagroup.graphql.examples.server")
-            queries = listOf(
-                HelloQueryService(),
-                BookQueryService(),
-                CourseQueryService(),
-                UniversityQueryService(),
-            )
-            mutations = listOf(
-                LoginMutationService()
-            )
-            subscriptions = listOf(
-                ExampleSubscriptionService()
-            )
+            queries =
+                listOf(
+                    HelloQueryService(),
+                    BookQueryService(),
+                    CourseQueryService(),
+                    UniversityQueryService(),
+                )
+            mutations =
+                listOf(
+                    LoginMutationService(),
+                )
+            subscriptions =
+                listOf(
+                    ExampleSubscriptionService(),
+                )
         }
         engine {
-            dataLoaderRegistryFactory = KotlinDataLoaderRegistryFactory(
-                UniversityDataLoader, CourseDataLoader, BookDataLoader
-            )
+            dataLoaderRegistryFactory =
+                KotlinDataLoaderRegistryFactory(
+                    UniversityDataLoader,
+                    CourseDataLoader,
+                    BookDataLoader,
+                )
         }
         server {
             contextFactory = CustomGraphQLContextFactory()

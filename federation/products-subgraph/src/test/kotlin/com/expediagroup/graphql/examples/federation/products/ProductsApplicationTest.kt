@@ -26,21 +26,24 @@ import org.springframework.test.web.reactive.server.WebTestClient
 
 @SpringBootTest
 @AutoConfigureWebTestClient
-class ProductsApplicationTest(@Autowired val testClient: WebTestClient) {
-
+class ProductsApplicationTest(
+    @Autowired val testClient: WebTestClient,
+) {
     @Test
     fun `verifies product query`() {
-        val query = """
-          query ProductById(${"$"}productId: ID!) {
-            product(id: ${"$"}productId) {
-              id
-              name
-              description
+        val query =
+            """
+            query ProductById(${"$"}productId: ID!) {
+              product(id: ${"$"}productId) {
+                id
+                name
+                description
+              }
             }
-          }
-        """.trimIndent()
+            """.trimIndent()
 
-        testClient.post()
+        testClient
+            .post()
             .uri("/graphql")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
@@ -48,15 +51,19 @@ class ProductsApplicationTest(@Autowired val testClient: WebTestClient) {
                 GraphQLRequest(
                     operationName = "ProductById",
                     query = query,
-                    variables = mapOf("productId" to 1)
-                )
-            )
-            .exchange()
-            .expectStatus().isOk
+                    variables = mapOf("productId" to 1),
+                ),
+            ).exchange()
+            .expectStatus()
+            .isOk
             .expectBody()
-            .jsonPath("\$.data.product").exists()
-            .jsonPath("\$.errors").doesNotExist()
-            .jsonPath("\$.data.product.name").isEqualTo("Saturn V")
-            .jsonPath("\$.data.product.description").isEqualTo("The Original Super Heavy-Lift Rocket!")
+            .jsonPath("\$.data.product")
+            .exists()
+            .jsonPath("\$.errors")
+            .doesNotExist()
+            .jsonPath("\$.data.product.name")
+            .isEqualTo("Saturn V")
+            .jsonPath("\$.data.product.description")
+            .isEqualTo("The Original Super Heavy-Lift Rocket!")
     }
 }

@@ -4,11 +4,10 @@ description = "An example GraphQL Spring server"
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.ktlint)
     alias(libs.plugins.graphql.kotlin)
     alias(libs.plugins.kotlin.spring)
     alias(libs.plugins.spring.boot)
-    alias(libs.plugins.ktlint)
-    alias(libs.plugins.detekt)
 }
 
 dependencies {
@@ -49,10 +48,9 @@ tasks.jar {
     enabled = false
 }
 
+
+
 ktlint {
     version.set(libs.versions.ktlint.core.get())
 }
 
-detekt {
-    toolVersion = libs.versions.detekt.get()
-}

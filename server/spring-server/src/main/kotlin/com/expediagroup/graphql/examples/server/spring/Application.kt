@@ -34,7 +34,6 @@ import org.springframework.context.annotation.Bean
 
 @SpringBootApplication
 class Application {
-
     @Bean
     fun wiringFactory() = CustomDirectiveWiringFactory()
 
@@ -44,7 +43,7 @@ class Application {
     @Bean
     fun dataFetcherFactoryProvider(
         springDataFetcherFactory: SpringDataFetcherFactory,
-        applicationContext: ApplicationContext
+        applicationContext: ApplicationContext,
     ) = CustomDataFetcherFactoryProvider(springDataFetcherFactory, applicationContext)
 
     @Bean
@@ -54,13 +53,15 @@ class Application {
     fun apolloSubscriptionHooks(): ApolloSubscriptionHooks = MySubscriptionHooks()
 
     @Bean
-    fun idValueUnboxer(): IDValueUnboxer = object : IDValueUnboxer() {
-        override fun unbox(`object`: Any?): Any? = if (`object` is MyValueClass) {
-            `object`.value
-        } else {
-            super.unbox(`object`)
+    fun idValueUnboxer(): IDValueUnboxer =
+        object : IDValueUnboxer() {
+            override fun unbox(`object`: Any?): Any? =
+                if (`object` is MyValueClass) {
+                    `object`.value
+                } else {
+                    super.unbox(`object`)
+                }
         }
-    }
 }
 
 fun main(args: Array<String>) {

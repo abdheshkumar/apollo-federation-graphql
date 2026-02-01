@@ -16,7 +16,12 @@
 
 package com.expediagroup.graphql.examples.server.spring.model
 
-sealed class Fruit(val color: String) {
-    class Apple(private val variety: String) : Fruit(if (variety == "red delicious") "red" else "green")
+sealed class Fruit(
+    val color: String,
+) {
+    class Apple(
+        private val variety: String,
+    ) : Fruit(if (variety == "red delicious") "red" else "green")
+
     class Orange : Fruit("orange")
 }

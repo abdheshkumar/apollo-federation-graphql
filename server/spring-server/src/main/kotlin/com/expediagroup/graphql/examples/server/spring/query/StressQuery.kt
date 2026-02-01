@@ -30,16 +30,19 @@ import java.util.UUID
  */
 @Component
 class StressQuery : Query {
-
-    fun stressNode(traceId: String?, count: Int?): List<StressNode> {
+    fun stressNode(
+        traceId: String?,
+        count: Int?,
+    ): List<StressNode> {
         val id = traceId ?: getRandomStringFromThread()
         return (1..(count ?: 1)).map { StressNode(id) }
     }
 }
 
 @Suppress("MemberVisibilityCanBePrivate", "RedundantSuspendModifier")
-class StressNode(val traceId: String) {
-
+class StressNode(
+    val traceId: String,
+) {
     val valueId: String = getRandomStringFromThread()
 
     fun functionId(): String = getRandomStringFromThread()

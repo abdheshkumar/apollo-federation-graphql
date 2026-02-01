@@ -32,7 +32,6 @@ import kotlin.random.Random
 
 @Component
 class SimpleSubscription : Subscription {
-
     val logger: Logger = LoggerFactory.getLogger(SimpleSubscription::class.java)
 
     @GraphQLDescription("Returns a single value")
@@ -40,11 +39,12 @@ class SimpleSubscription : Subscription {
 
     @GraphQLDescription("Returns a random number every second")
     fun counter(limit: Int? = null): Flux<Int> {
-        val flux = Flux.interval(Duration.ofSeconds(1)).map {
-            val value = Random.nextInt()
-            logger.info("Returning $value from counter")
-            value
-        }
+        val flux =
+            Flux.interval(Duration.ofSeconds(1)).map {
+                val value = Random.nextInt()
+                logger.info("Returning $value from counter")
+                value
+            }
 
         return if (limit != null) {
             flux.take(limit.toLong())
@@ -54,27 +54,35 @@ class SimpleSubscription : Subscription {
     }
 
     @GraphQLDescription("Returns a random number every second, errors if even")
-    fun counterWithError(): Flux<Int> = Flux.interval(Duration.ofSeconds(1))
-        .map {
-            val value = Random.nextInt()
-            if (value % 2 == 0) {
-                throw Exception("Value is even $value")
-            } else value
-        }
+    fun counterWithError(): Flux<Int> =
+        Flux
+            .interval(Duration.ofSeconds(1))
+            .map {
+                val value = Random.nextInt()
+                if (value % 2 == 0) {
+                    throw Exception("Value is even $value")
+                } else {
+                    value
+                }
+            }
 
     @GraphQLDescription("Returns one value then an error")
-    fun singleValueThenError(): Flux<Int> = Flux.just(1, 2)
-        .map { if (it == 2) throw Exception("Second value") else it }
+    fun singleValueThenError(): Flux<Int> =
+        Flux
+            .just(1, 2)
+            .map { if (it == 2) throw Exception("Second value") else it }
 
     @GraphQLDescription("Returns stream of values")
     fun flow(): Publisher<Int> = flowOf(1, 2, 4).asPublisher()
 
     @GraphQLDescription("Returns stream of errors")
     fun flowOfErrors(): Publisher<DataFetcherResult<String?>> {
-        val dfr: DataFetcherResult<String?> = DataFetcherResult.newResult<String?>()
-            .data(null)
-            .error(GraphqlErrorException.newErrorException().cause(Exception("error thrown")).build())
-            .build()
+        val dfr: DataFetcherResult<String?> =
+            DataFetcherResult
+                .newResult<String?>()
+                .data(null)
+                .error(GraphqlErrorException.newErrorException().cause(Exception("error thrown")).build())
+                .build()
 
         return flowOf(dfr, dfr).asPublisher()
     }

@@ -16,20 +16,23 @@
 
 package com.expediagroup.graphql.examples.server.spring.dataloaders
 
-import com.expediagroup.graphql.examples.server.spring.model.Company
 import com.expediagroup.graphql.dataloader.KotlinDataLoader
+import com.expediagroup.graphql.examples.server.spring.model.Company
+import graphql.GraphQLContext
 import org.dataloader.DataLoaderFactory
 import org.springframework.stereotype.Component
-import graphql.GraphQLContext
 import java.util.concurrent.CompletableFuture
 
 @Component
-class CompanyDataLoader(private val service: CompanyService) : KotlinDataLoader<Int, Company> {
+class CompanyDataLoader(
+    private val service: CompanyService,
+) : KotlinDataLoader<Int, Company> {
     companion object {
         const val name = "CompanyDataLoader"
     }
 
     override val dataLoaderName = name
+
     override fun getDataLoader(graphQLContext: GraphQLContext) =
         DataLoaderFactory.newDataLoader<Int, Company> { ids ->
             CompletableFuture.supplyAsync { service.getCompanies(ids) }

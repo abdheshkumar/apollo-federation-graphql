@@ -25,24 +25,27 @@ import java.util.concurrent.CompletableFuture
 
 @Component
 class DataAndErrorsQuery : Query {
-
-    fun returnDataAndErrors(): DataFetcherResult<String?> {
-        return DataFetcherResult.newResult<String>()
+    fun returnDataAndErrors(): DataFetcherResult<String?> =
+        DataFetcherResult
+            .newResult<String>()
             .data("Hello from data fetcher")
             .error(getError())
             .build()
-    }
 
     fun completableFutureDataAndErrors(): CompletableFuture<DataFetcherResult<String?>> {
-        val dataFetcherResult = DataFetcherResult.newResult<String>()
-            .data("Hello from data fetcher")
-            .error(getError())
-            .build()
+        val dataFetcherResult =
+            DataFetcherResult
+                .newResult<String>()
+                .data("Hello from data fetcher")
+                .error(getError())
+                .build()
         return CompletableFuture.completedFuture(dataFetcherResult)
     }
 
-    private fun getError(): GraphQLError = GraphqlErrorException.newErrorException()
-        .cause(RuntimeException("data and errors"))
-        .message("data and errors")
-        .build()
+    private fun getError(): GraphQLError =
+        GraphqlErrorException
+            .newErrorException()
+            .cause(RuntimeException("data and errors"))
+            .message("data and errors")
+            .build()
 }

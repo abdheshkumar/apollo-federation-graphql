@@ -47,23 +47,25 @@ fun main() {
      * https://github.com/dariuszkuc/graphql-kotlin/blob/client-custom-scalars/examples/client/server/src/main/kotlin/com/expediagroup/graphql/examples/client/server/Application.kt
      * ************************************************************
      */
-    val httpClient = HttpClient(engineFactory = OkHttp) {
-        engine {
-            config {
-                connectTimeout(10, TimeUnit.SECONDS)
-                readTimeout(60, TimeUnit.SECONDS)
-                writeTimeout(60, TimeUnit.SECONDS)
+    val httpClient =
+        HttpClient(engineFactory = OkHttp) {
+            engine {
+                config {
+                    connectTimeout(10, TimeUnit.SECONDS)
+                    readTimeout(60, TimeUnit.SECONDS)
+                    writeTimeout(60, TimeUnit.SECONDS)
+                }
+            }
+            install(Logging) {
+                logger = Logger.DEFAULT
+                level = LogLevel.HEADERS
             }
         }
-        install(Logging) {
-            logger = Logger.DEFAULT
-            level = LogLevel.HEADERS
-        }
-    }
-    val client = GraphQLKtorClient(
-        url = URL("http://localhost:8080/graphql"),
-        httpClient = httpClient
-    )
+    val client =
+        GraphQLKtorClient(
+            url = URL("http://localhost:8080/graphql"),
+            httpClient = httpClient,
+        )
     println("HelloWorld examples")
     runBlocking {
         val helloWorldQuery = HelloWorldQuery(variables = HelloWorldQuery.Variables())
@@ -72,12 +74,13 @@ fun main() {
 
         val helloWorldResultImplicit: GraphQLClientResponse<HelloWorldQuery.Result> = client.execute(helloWorldQuery)
 
-        val results = client.execute(
-            listOf(
-                HelloWorldQuery(variables = HelloWorldQuery.Variables(name = null)),
-                HelloWorldQuery(variables = HelloWorldQuery.Variables(name = "Dariusz"))
+        val results =
+            client.execute(
+                listOf(
+                    HelloWorldQuery(variables = HelloWorldQuery.Variables(name = null)),
+                    HelloWorldQuery(variables = HelloWorldQuery.Variables(name = "Dariusz")),
+                ),
             )
-        )
 
         val resultsNoParam = results[0].data as? HelloWorldQuery.Result
         val resultsWithParam = results[1].data as? HelloWorldQuery.Result
@@ -94,7 +97,10 @@ fun main() {
         val addResult = client.execute(AddObjectMutation(variables = AddObjectMutation.Variables(newObject = BasicObjectInput(1, "first"))))
         println("\tadd new object: ${addResult.data?.addBasicObject}")
 
-        val updateResult = client.execute(UpdateObjectMutation(variables = UpdateObjectMutation.Variables(updatedObject = BasicObjectInput(1, "updated"))))
+        val updateResult =
+            client.execute(
+                UpdateObjectMutation(variables = UpdateObjectMutation.Variables(updatedObject = BasicObjectInput(1, "updated"))),
+            )
         println("\tupdate new object: ${updateResult.data?.updateBasicObject}")
     }
 
@@ -110,14 +116,15 @@ fun main() {
 
     println("entities query")
     runBlocking {
-        val entity = Json.decodeFromString<JsonObject>(
-            """
+        val entity =
+            Json.decodeFromString<JsonObject>(
+                """
             |{
             |  "__typename": "Product",
             |  "id": "apollo-federation"
             |}
-            """.trimMargin()
-        )
+                """.trimMargin(),
+            )
         val entityData = client.execute(EntitiesQuery(variables = EntitiesQuery.Variables(representations = listOf(entity))))
         val product = entityData.data?._entities?.get(0) as? Product
         println("\tretrieved product SKU: ${product?.sku}")

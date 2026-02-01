@@ -35,12 +35,15 @@ import java.util.concurrent.ConcurrentHashMap
  */
 @Component
 class TrackTimesInvokedInstrumentation : SimplePerformantInstrumentation() {
-
     private val logger = LoggerFactory.getLogger(TrackTimesInvokedInstrumentation::class.java)
 
-    override fun createState(parameters: InstrumentationCreateStateParameters): InstrumentationState = TrackTimesInvokedInstrumenationState()
+    override fun createState(parameters: InstrumentationCreateStateParameters): InstrumentationState =
+        TrackTimesInvokedInstrumenationState()
 
-    override fun beginFieldFetch(parameters: InstrumentationFieldFetchParameters, state: InstrumentationState?): InstrumentationContext<Any> {
+    override fun beginFieldFetch(
+        parameters: InstrumentationFieldFetchParameters,
+        state: InstrumentationState?,
+    ): InstrumentationContext<Any> {
         if (parameters.field.getDirective(TRACK_TIMES_INVOKED_DIRECTIVE_NAME) != null) {
             (state as? TrackTimesInvokedInstrumenationState)?.incrementCount(parameters.field.name)
         }
@@ -48,7 +51,11 @@ class TrackTimesInvokedInstrumentation : SimplePerformantInstrumentation() {
         return SimpleInstrumentationContext<Any>()
     }
 
-    override fun instrumentExecutionResult(executionResult: ExecutionResult, parameters: InstrumentationExecutionParameters, state: InstrumentationState?): CompletableFuture<ExecutionResult> {
+    override fun instrumentExecutionResult(
+        executionResult: ExecutionResult,
+        parameters: InstrumentationExecutionParameters,
+        state: InstrumentationState?,
+    ): CompletableFuture<ExecutionResult> {
         val count = (state as? TrackTimesInvokedInstrumenationState)?.getCount()
         logger.info("Fields invoked: $count")
         return super.instrumentExecutionResult(executionResult, parameters, state)
@@ -58,7 +65,6 @@ class TrackTimesInvokedInstrumentation : SimplePerformantInstrumentation() {
      * The state per execution for this Instrumentation
      */
     private class TrackTimesInvokedInstrumenationState : InstrumentationState {
-
         private val fieldCount = ConcurrentHashMap<String, Int>()
 
         fun incrementCount(fieldName: String) {

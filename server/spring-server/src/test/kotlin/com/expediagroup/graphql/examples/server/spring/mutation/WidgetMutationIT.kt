@@ -32,37 +32,48 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class WidgetMutationIT(@Autowired private val testClient: WebTestClient) {
-
+class WidgetMutationIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @Test
     fun `verify processWidget query`() {
         val query = "processWidget"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
-            .bodyValue("mutation { $query(widget: { value: 2, deprecatedValue: 11 }) { value, multiplyValueBy(multiplier: 3), deprecatedValue } }")
-            .exchange()
+            .bodyValue(
+                "mutation { $query(widget: { value: 2, deprecatedValue: 11 }) { value, multiplyValueBy(multiplier: 3), deprecatedValue } }",
+            ).exchange()
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.value").isEqualTo("2")
-            .jsonPath("$DATA_JSON_PATH.$query.multiplyValueBy").isEqualTo("6")
-            .jsonPath("$DATA_JSON_PATH.$query.deprecatedValue").isEqualTo("11")
+            .jsonPath("$DATA_JSON_PATH.$query.value")
+            .isEqualTo("2")
+            .jsonPath("$DATA_JSON_PATH.$query.multiplyValueBy")
+            .isEqualTo("6")
+            .jsonPath("$DATA_JSON_PATH.$query.deprecatedValue")
+            .isEqualTo("11")
     }
 
     @Test
     fun `verify processWidget query with null value`() {
         val query = "processWidget"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
-            .bodyValue("mutation { $query(widget: { value: null, deprecatedValue: 11 }) { value, multiplyValueBy(multiplier: 3), deprecatedValue } }")
-            .exchange()
+            .bodyValue(
+                "mutation { $query(widget: { value: null, deprecatedValue: 11 }) { value, multiplyValueBy(multiplier: 3), deprecatedValue } }",
+            ).exchange()
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.value").isEqualTo("42")
-            .jsonPath("$DATA_JSON_PATH.$query.multiplyValueBy").isEqualTo("126")
-            .jsonPath("$DATA_JSON_PATH.$query.deprecatedValue").isEqualTo("11")
+            .jsonPath("$DATA_JSON_PATH.$query.value")
+            .isEqualTo("42")
+            .jsonPath("$DATA_JSON_PATH.$query.multiplyValueBy")
+            .isEqualTo("126")
+            .jsonPath("$DATA_JSON_PATH.$query.deprecatedValue")
+            .isEqualTo("11")
     }
 }

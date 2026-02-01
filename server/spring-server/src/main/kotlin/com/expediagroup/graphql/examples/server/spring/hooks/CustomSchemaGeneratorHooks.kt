@@ -20,8 +20,8 @@ import com.expediagroup.graphql.examples.server.spring.model.MyValueClass
 import com.expediagroup.graphql.generator.directives.KotlinDirectiveWiringFactory
 import com.expediagroup.graphql.generator.hooks.SchemaGeneratorHooks
 import graphql.GraphQLContext
-import graphql.execution.CoercedVariables
 import graphql.Scalars
+import graphql.execution.CoercedVariables
 import graphql.language.StringValue
 import graphql.language.Value
 import graphql.schema.Coercing
@@ -43,58 +43,71 @@ import kotlin.reflect.full.isSubclassOf
 /**
  * Schema generator hook that adds additional scalar types.
  */
-class CustomSchemaGeneratorHooks(override val wiringFactory: KotlinDirectiveWiringFactory) : SchemaGeneratorHooks {
-
+class CustomSchemaGeneratorHooks(
+    override val wiringFactory: KotlinDirectiveWiringFactory,
+) : SchemaGeneratorHooks {
     /**
      * Register additional GraphQL scalar types.
      */
-    override fun willGenerateGraphQLType(type: KType): GraphQLType? = when (type.classifier) {
-        MyValueClass::class -> Scalars.GraphQLString
-        UUID::class -> graphqlUUIDType
-        ClosedRange::class -> {
-            when (type.arguments[0].type?.classifier as? KClass<*>) {
-                LocalDate::class -> graphqlPeriodType
-                else -> null
+    override fun willGenerateGraphQLType(type: KType): GraphQLType? =
+        when (type.classifier) {
+            MyValueClass::class -> Scalars.GraphQLString
+            UUID::class -> graphqlUUIDType
+            ClosedRange::class -> {
+                when (type.arguments[0].type?.classifier as? KClass<*>) {
+                    LocalDate::class -> graphqlPeriodType
+                    else -> null
+                }
             }
+            else -> null
         }
-        else -> null
-    }
 
     /**
      * Register Reactor Mono monad type.
      */
-    override fun willResolveMonad(type: KType): KType = when (type.classifier) {
-        Mono::class -> type.arguments.first().type ?: type
-        Set::class -> List::class.createType(type.arguments)
-        else -> type
-    }
+    override fun willResolveMonad(type: KType): KType =
+        when (type.classifier) {
+            Mono::class -> type.arguments.first().type ?: type
+            Set::class -> List::class.createType(type.arguments)
+            else -> type
+        }
 
     /**
      * Exclude the Spring bean factory interface
      */
-    override fun isValidSuperclass(kClass: KClass<*>): Boolean {
-        return when {
+    override fun isValidSuperclass(kClass: KClass<*>): Boolean =
+        when {
             kClass.isSubclassOf(BeanFactoryAware::class) -> false
             else -> super.isValidSuperclass(kClass)
         }
-    }
 }
 
-internal val graphqlUUIDType = GraphQLScalarType.newScalar()
-    .name("UUID")
-    .description("A type representing a formatted java.util.UUID")
-    .coercing(UUIDCoercing)
-    .build()
+internal val graphqlUUIDType =
+    GraphQLScalarType
+        .newScalar()
+        .name("UUID")
+        .description("A type representing a formatted java.util.UUID")
+        .coercing(UUIDCoercing)
+        .build()
 
 private object UUIDCoercing : Coercing<UUID, String> {
-    override fun parseValue(input: Any, graphQLContext: GraphQLContext, locale: Locale): UUID =
+    override fun parseValue(
+        input: Any,
+        graphQLContext: GraphQLContext,
+        locale: Locale,
+    ): UUID =
         runCatching {
             UUID.fromString(serialize(input, graphQLContext, locale))
         }.getOrElse {
             throw CoercingParseValueException("Expected valid UUID but was $input")
         }
 
-    override fun parseLiteral(input: Value<*>, variables: CoercedVariables, graphQLContext: GraphQLContext, locale: Locale): UUID {
+    override fun parseLiteral(
+        input: Value<*>,
+        variables: CoercedVariables,
+        graphQLContext: GraphQLContext,
+        locale: Locale,
+    ): UUID {
         val uuidString = (input as? StringValue)?.value
         return runCatching {
             UUID.fromString(uuidString)
@@ -103,7 +116,11 @@ private object UUIDCoercing : Coercing<UUID, String> {
         }
     }
 
-    override fun serialize(dataFetcherResult: Any, graphQLContext: GraphQLContext, locale: Locale): String =
+    override fun serialize(
+        dataFetcherResult: Any,
+        graphQLContext: GraphQLContext,
+        locale: Locale,
+    ): String =
         runCatching {
             dataFetcherResult.toString()
         }.getOrElse {
@@ -111,38 +128,56 @@ private object UUIDCoercing : Coercing<UUID, String> {
         }
 }
 
-internal val graphqlPeriodType: GraphQLScalarType = GraphQLScalarType.newScalar()
-    .name("Period")
-    .description("""A period of local date to local date, inclusive on both ends i.e. a closed range.""")
-    .coercing(PeriodCoercing)
-    .build()
+internal val graphqlPeriodType: GraphQLScalarType =
+    GraphQLScalarType
+        .newScalar()
+        .name("Period")
+        .description("""A period of local date to local date, inclusive on both ends i.e. a closed range.""")
+        .coercing(PeriodCoercing)
+        .build()
 
 typealias Period = ClosedRange<LocalDate>
 
 private object PeriodCoercing : Coercing<Period, String> {
-    override fun parseValue(input: Any, graphQLContext: GraphQLContext, locale: Locale): Period =
+    override fun parseValue(
+        input: Any,
+        graphQLContext: GraphQLContext,
+        locale: Locale,
+    ): Period =
         runCatching {
             input.toString().parseAsPeriod()
         }.getOrElse {
             throw CoercingParseValueException("Expected valid Period but was $input")
         }
 
-    override fun parseLiteral(input: Value<*>, variables: CoercedVariables, graphQLContext: GraphQLContext, locale: Locale): Period =
+    override fun parseLiteral(
+        input: Value<*>,
+        variables: CoercedVariables,
+        graphQLContext: GraphQLContext,
+        locale: Locale,
+    ): Period =
         runCatching {
-            (input as? StringValue)?.value?.parseAsPeriod() ?: throw CoercingParseLiteralException("Expected valid Period literal but was $input")
+            (input as? StringValue)?.value?.parseAsPeriod()
+                ?: throw CoercingParseLiteralException("Expected valid Period literal but was $input")
         }.getOrElse {
             throw CoercingParseLiteralException("Expected valid Period literal but was $input")
         }
 
-    override fun serialize(dataFetcherResult: Any, graphQLContext: GraphQLContext, locale: Locale): String =
-        kotlin.runCatching {
-            toString()
-        }.getOrElse {
-            throw CoercingSerializeException("Data fetcher result $dataFetcherResult cannot be serialized to a String")
-        }
+    override fun serialize(
+        dataFetcherResult: Any,
+        graphQLContext: GraphQLContext,
+        locale: Locale,
+    ): String =
+        kotlin
+            .runCatching {
+                toString()
+            }.getOrElse {
+                throw CoercingSerializeException("Data fetcher result $dataFetcherResult cannot be serialized to a String")
+            }
 
-    private fun String.parseAsPeriod(): Period = split("..").let {
-        if (it.size != 2) error("Cannot parse input $this as Period")
-        LocalDate.parse(it[0])..LocalDate.parse(it[1])
-    }
+    private fun String.parseAsPeriod(): Period =
+        split("..").let {
+            if (it.size != 2) error("Cannot parse input $this as Period")
+            LocalDate.parse(it[0])..LocalDate.parse(it[1])
+        }
 }

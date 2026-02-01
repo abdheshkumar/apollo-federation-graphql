@@ -28,7 +28,6 @@ import java.util.Random
  */
 @Component
 class SimpleQuery : Query {
-
     @Deprecated(message = "this query is deprecated", replaceWith = ReplaceWith("shinyNewQuery"))
     @GraphQLDescription("old query that should not be used always returns false")
     fun simpleDeprecatedQuery(): Boolean = false
@@ -44,7 +43,7 @@ class SimpleQuery : Query {
     @GraphQLDescription("performs some operation")
     fun doSomething(
         @GraphQLDescription("super important value")
-        value: Int
+        value: Int,
     ): Boolean = true
 
     @GraphQLDescription("generates pseudo random int and returns it if it is less than 50")
@@ -65,15 +64,15 @@ class SimpleQuery : Query {
     @GraphQLDescription("query with optional input")
     fun doSomethingWithOptionalInput(
         @GraphQLDescription("this field is required") requiredValue: Int,
-        @GraphQLDescription("this field is optional") optionalValue: Int? = null
-    ) =
-        "required value=$requiredValue, optional value=$optionalValue"
+        @GraphQLDescription("this field is optional") optionalValue: Int? = null,
+    ) = "required value=$requiredValue, optional value=$optionalValue"
 
     @GraphQLDescription("Demonstrate the usage of custom enum input")
-    fun getAValue(selection: Selection): String = when (selection) {
-        Selection.ONE -> "You chose the first one"
-        Selection.TWO -> "You chose the second one"
-    }
+    fun getAValue(selection: Selection): String =
+        when (selection) {
+            Selection.ONE -> "You chose the first one"
+            Selection.TWO -> "You chose the second one"
+        }
 
     @GraphQLDescription("Set exposed as a function")
     fun setList(): Set<Int> = setOf(1, 1, 2, 3)

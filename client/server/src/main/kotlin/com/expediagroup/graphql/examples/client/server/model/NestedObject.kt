@@ -25,5 +25,5 @@ data class NestedObject(
     @GraphQLDescription("Name of the object")
     val name: String,
     @GraphQLDescription("Children elements")
-    val children: List<NestedObject>
+    val children: List<NestedObject>,
 )

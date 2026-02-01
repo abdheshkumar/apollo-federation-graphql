@@ -28,18 +28,24 @@ import kotlin.reflect.KProperty
  */
 class CustomDataFetcherFactoryProvider(
     private val springDataFetcherFactory: SpringDataFetcherFactory,
-    private val applicationContext: ApplicationContext
+    private val applicationContext: ApplicationContext,
 ) : SimpleKotlinDataFetcherFactoryProvider() {
-
-    override fun functionDataFetcherFactory(target: Any?, kClass: KClass<*>, kFunction: KFunction<*>) = DataFetcherFactory {
+    override fun functionDataFetcherFactory(
+        target: Any?,
+        kClass: KClass<*>,
+        kFunction: KFunction<*>,
+    ) = DataFetcherFactory {
         CustomFunctionDataFetcher(
             target = target,
             fn = kFunction,
-            appContext = applicationContext
+            appContext = applicationContext,
         )
     }
 
-    override fun propertyDataFetcherFactory(kClass: KClass<*>, kProperty: KProperty<*>): DataFetcherFactory<Any?> =
+    override fun propertyDataFetcherFactory(
+        kClass: KClass<*>,
+        kProperty: KProperty<*>,
+    ): DataFetcherFactory<Any?> =
         if (kProperty.isLateinit) {
             springDataFetcherFactory
         } else {

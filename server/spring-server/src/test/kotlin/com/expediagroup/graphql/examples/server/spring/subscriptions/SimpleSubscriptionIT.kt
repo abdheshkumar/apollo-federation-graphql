@@ -40,14 +40,15 @@ import kotlin.random.Random
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = ["graphql.packages=com.expediagroup.graphql.examples.server.spring"]
+    properties = ["graphql.packages=com.expediagroup.graphql.examples.server.spring"],
 )
 @EnableAutoConfiguration
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.MethodName::class)
 @Disabled("unknown race condition is causing random failures when run using GH action, cannot reproduce it locally")
-class SimpleSubscriptionIT(@LocalServerPort private var port: Int) {
-
+class SimpleSubscriptionIT(
+    @LocalServerPort private var port: Int,
+) {
     private val objectMapper = jacksonObjectMapper()
     private val client = ReactorNettyWebSocketClient()
     private val uri: URI = URI.create("ws://localhost:$port$SUBSCRIPTION_ENDPOINT")
@@ -59,7 +60,8 @@ class SimpleSubscriptionIT(@LocalServerPort private var port: Int) {
 
         val subscription = client.execute(uri) { session -> executeSubscription(session, query, output) }.subscribe()
 
-        StepVerifier.create(output)
+        StepVerifier
+            .create(output)
             .expectNext("{\"data\":{\"$query\":1}}")
             .expectComplete()
             .verify()
@@ -76,7 +78,8 @@ class SimpleSubscriptionIT(@LocalServerPort private var port: Int) {
 
         val subscription = client.execute(uri) { session -> executeSubscription(session, query, output) }.subscribe()
 
-        StepVerifier.create(output)
+        StepVerifier
+            .create(output)
             .expectNextMatches { s -> s.matches(expectedDataRegex) }
             .expectNextMatches { s -> s.matches(expectedDataRegex) }
             .expectComplete()
@@ -92,7 +95,8 @@ class SimpleSubscriptionIT(@LocalServerPort private var port: Int) {
 
         val subscription = client.execute(uri) { session -> executeSubscription(session, query, output) }.subscribe()
 
-        StepVerifier.create(output)
+        StepVerifier
+            .create(output)
             .expectNextCount(1)
             .expectComplete()
             .verify()
@@ -107,7 +111,8 @@ class SimpleSubscriptionIT(@LocalServerPort private var port: Int) {
 
         val subscription = client.execute(uri) { session -> executeSubscription(session, query, output) }.subscribe()
 
-        StepVerifier.create(output)
+        StepVerifier
+            .create(output)
             .expectNext("{\"data\":{\"$query\":1}}")
             .expectNext("{\"data\":{\"$query\":2}}")
             .expectNext("{\"data\":{\"$query\":4}}")
@@ -124,7 +129,8 @@ class SimpleSubscriptionIT(@LocalServerPort private var port: Int) {
 
         val subscription = client.execute(uri) { session -> executeSubscription(session, query, output) }.subscribe()
 
-        StepVerifier.create(output)
+        StepVerifier
+            .create(output)
             .expectNext("{\"data\":{\"$query\":\"none\"}}")
             .expectNext("{\"data\":{\"$query\":\"value 2\"}}")
             .expectNext("{\"data\":{\"$query\":\"value3\"}}")
@@ -139,9 +145,15 @@ class SimpleSubscriptionIT(@LocalServerPort private var port: Int) {
         val query = "subscriptionContext"
         val output = TestPublisher.create<String>()
 
-        val subscription = client.execute(uri) { session -> executeSubscription(session, query, output, mapOf("Authorization" to "mytoken")) }.subscribe()
+        val subscription =
+            client
+                .execute(
+                    uri,
+                ) { session -> executeSubscription(session, query, output, mapOf("Authorization" to "mytoken")) }
+                .subscribe()
 
-        StepVerifier.create(output)
+        StepVerifier
+            .create(output)
             .expectNext("{\"data\":{\"$query\":\"mytoken\"}}")
             .expectNext("{\"data\":{\"$query\":\"value 2\"}}")
             .expectNext("{\"data\":{\"$query\":\"value3\"}}")
@@ -155,16 +167,18 @@ class SimpleSubscriptionIT(@LocalServerPort private var port: Int) {
         session: WebSocketSession,
         query: String,
         output: TestPublisher<String>,
-        initPayload: Any? = null
+        initPayload: Any? = null,
     ): Mono<Void> {
         val id = Random.nextInt().toString()
         val initMessage = getInitMessage(id, initPayload)
         val startMessage = getStartMessage(query, id)
 
-        return session.send(Flux.just(session.textMessage(initMessage)))
+        return session
+            .send(Flux.just(session.textMessage(initMessage)))
             .then(session.send(Flux.just(session.textMessage(startMessage))))
             .thenMany(
-                session.receive()
+                session
+                    .receive()
                     .map { objectMapper.readValue<ApolloSubscriptionOperationMessage>(it.payloadAsText) }
                     .doOnNext {
                         if (it.type == ApolloSubscriptionOperationMessage.ServerMessages.GQL_DATA.type) {
@@ -173,17 +187,30 @@ class SimpleSubscriptionIT(@LocalServerPort private var port: Int) {
                         } else if (it.type == ApolloSubscriptionOperationMessage.ServerMessages.GQL_COMPLETE.type) {
                             output.complete()
                         }
-                    }
-            )
-            .then()
+                    },
+            ).then()
     }
 
     private fun ApolloSubscriptionOperationMessage.toJson() = objectMapper.writeValueAsString(this)
-    private fun getInitMessage(id: String, payload: Any?) = ApolloSubscriptionOperationMessage(
-        ApolloSubscriptionOperationMessage.ClientMessages.GQL_CONNECTION_INIT.type, id = id, payload = payload
+
+    private fun getInitMessage(
+        id: String,
+        payload: Any?,
+    ) = ApolloSubscriptionOperationMessage(
+        ApolloSubscriptionOperationMessage.ClientMessages.GQL_CONNECTION_INIT.type,
+        id = id,
+        payload = payload,
     ).toJson()
-    private fun getStartMessage(query: String, id: String): String {
+
+    private fun getStartMessage(
+        query: String,
+        id: String,
+    ): String {
         val request = GraphQLRequest("subscription { $query }")
-        return ApolloSubscriptionOperationMessage(ApolloSubscriptionOperationMessage.ClientMessages.GQL_START.type, id = id, payload = request).toJson()
+        return ApolloSubscriptionOperationMessage(
+            ApolloSubscriptionOperationMessage.ClientMessages.GQL_START.type,
+            id = id,
+            payload = request,
+        ).toJson()
     }
 }

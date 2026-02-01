@@ -23,13 +23,12 @@ data class User(
     val firstName: String?,
     val lastName: String?,
     val universityId: Int?,
-    val isAdmin: Boolean = false
+    val isAdmin: Boolean = false,
 ) {
     suspend fun university(): University? {
         universityId ?: return null
         return University.search(listOf(universityId))[0]
     }
 
-    fun intThatNeverComes(): Int =
-        throw GraphQLException("This value will never return")
+    fun intThatNeverComes(): Int = throw GraphQLException("This value will never return")
 }

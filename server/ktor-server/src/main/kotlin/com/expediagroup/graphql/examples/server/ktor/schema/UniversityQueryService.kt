@@ -24,8 +24,12 @@ import graphql.schema.DataFetchingEnvironment
 import java.util.concurrent.CompletableFuture
 
 class UniversityQueryService : Query {
-    fun searchUniversities(params: UniversitySearchParameters, dfe: DataFetchingEnvironment): CompletableFuture<List<University>> =
-        dfe.getValuesFromDataLoader(UniversityDataLoader.dataLoaderName, params.ids)
+    fun searchUniversities(
+        params: UniversitySearchParameters,
+        dfe: DataFetchingEnvironment,
+    ): CompletableFuture<List<University>> = dfe.getValuesFromDataLoader(UniversityDataLoader.dataLoaderName, params.ids)
 }
 
-data class UniversitySearchParameters(val ids: List<Int>)
+data class UniversitySearchParameters(
+    val ids: List<Int>,
+)

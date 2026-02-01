@@ -26,18 +26,18 @@ import org.springframework.stereotype.Component
 
 @Component
 class CoroutineQuery : Query {
-
     private val logger = LoggerFactory.getLogger(CoroutineQuery::class.java)
 
     @GraphQLDescription("Example query that uses coroutines")
-    suspend fun exampleCoroutineQuery(msg: String): String = coroutineScope {
-        val start = System.currentTimeMillis()
-        val slow = async { slowFunction(msg) }
-        val fast = async { fastFunction(msg) }
-        val result = "${fast.await()}:${slow.await()}"
-        logger.info("computed final result in ${System.currentTimeMillis() - start} ms")
-        result
-    }
+    suspend fun exampleCoroutineQuery(msg: String): String =
+        coroutineScope {
+            val start = System.currentTimeMillis()
+            val slow = async { slowFunction(msg) }
+            val fast = async { fastFunction(msg) }
+            val result = "${fast.await()}:${slow.await()}"
+            logger.info("computed final result in ${System.currentTimeMillis() - start} ms")
+            result
+        }
 
     suspend fun slowFunction(msg: String): String {
         val slowFunctionStart = System.currentTimeMillis()

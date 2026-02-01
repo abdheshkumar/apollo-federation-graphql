@@ -33,27 +33,34 @@ import kotlin.test.assertNull
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class EnvironmentQueryIT(@Autowired private val testClient: WebTestClient) {
-
+class EnvironmentQueryIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @Test
     fun `verify nestedEnvironment query`() {
         val query = "nestedEnvironment"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query(value: 1) { parentValue, value, nested(value: 2) { parentValue, value} } }")
             .exchange()
-            .expectStatus().isOk
+            .expectStatus()
+            .isOk
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.parentValue").value<String?> {
+            .jsonPath("$DATA_JSON_PATH.$query.parentValue")
+            .value<String?> {
                 // workaround to NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS issue - when using jsonPath().isEqualTo() currently cannot pass null
                 assertNull(it)
-            }
-            .jsonPath("$DATA_JSON_PATH.$query.value").isEqualTo("1")
-            .jsonPath("$DATA_JSON_PATH.$query.nested").exists()
-            .jsonPath("$DATA_JSON_PATH.$query.nested.parentValue").isEqualTo("1")
-            .jsonPath("$DATA_JSON_PATH.$query.nested.value").isEqualTo("2")
+            }.jsonPath("$DATA_JSON_PATH.$query.value")
+            .isEqualTo("1")
+            .jsonPath("$DATA_JSON_PATH.$query.nested")
+            .exists()
+            .jsonPath("$DATA_JSON_PATH.$query.nested.parentValue")
+            .isEqualTo("1")
+            .jsonPath("$DATA_JSON_PATH.$query.nested.value")
+            .isEqualTo("2")
     }
 }

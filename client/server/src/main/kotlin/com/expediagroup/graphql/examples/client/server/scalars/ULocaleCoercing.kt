@@ -28,21 +28,32 @@ import graphql.schema.CoercingSerializeException
 import graphql.schema.GraphQLScalarType
 import java.util.Locale
 
-internal val graphqlULocaleType = GraphQLScalarType.newScalar()
-    .name("Locale")
-    .description("A type representing a Locale such as en_US or fr_FR")
-    .coercing(ULocaleCoercing)
-    .build()
+internal val graphqlULocaleType =
+    GraphQLScalarType
+        .newScalar()
+        .name("Locale")
+        .description("A type representing a Locale such as en_US or fr_FR")
+        .coercing(ULocaleCoercing)
+        .build()
 
 private object ULocaleCoercing : Coercing<ULocale, String> {
-    override fun parseValue(input: Any, graphQLContext: GraphQLContext, locale: Locale): ULocale =
+    override fun parseValue(
+        input: Any,
+        graphQLContext: GraphQLContext,
+        locale: Locale,
+    ): ULocale =
         runCatching {
             ULocale(serialize(input, graphQLContext, locale))
         }.getOrElse {
             throw CoercingParseValueException("Expected valid ULocale but was $input")
         }
 
-    override fun parseLiteral(input: Value<*>, variables: CoercedVariables, graphQLContext: GraphQLContext, locale: Locale): ULocale {
+    override fun parseLiteral(
+        input: Value<*>,
+        variables: CoercedVariables,
+        graphQLContext: GraphQLContext,
+        locale: Locale,
+    ): ULocale {
         val inputLocale = (input as? StringValue)?.value
         return runCatching {
             ULocale(inputLocale)
@@ -51,7 +62,11 @@ private object ULocaleCoercing : Coercing<ULocale, String> {
         }
     }
 
-    override fun serialize(dataFetcherResult: Any, graphQLContext: GraphQLContext, locale: Locale): String =
+    override fun serialize(
+        dataFetcherResult: Any,
+        graphQLContext: GraphQLContext,
+        locale: Locale,
+    ): String =
         runCatching {
             dataFetcherResult.toString()
         }.getOrElse {

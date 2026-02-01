@@ -31,14 +31,16 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class CoroutineQueryIT(@Autowired private val testClient: WebTestClient) {
-
+class CoroutineQueryIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @Test
     fun `verify exampleCoroutineQuery query`() {
         val query = "exampleCoroutineQuery"
         val expectedData = "hello:olleh"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
@@ -52,7 +54,8 @@ class CoroutineQueryIT(@Autowired private val testClient: WebTestClient) {
         val query = "slowFunction"
         val expectedData = "olleh"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
@@ -66,7 +69,8 @@ class CoroutineQueryIT(@Autowired private val testClient: WebTestClient) {
         val query = "fastFunction"
         val data = "hello"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)

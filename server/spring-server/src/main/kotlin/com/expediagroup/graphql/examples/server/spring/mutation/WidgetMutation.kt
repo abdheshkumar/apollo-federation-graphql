@@ -26,9 +26,10 @@ import org.springframework.stereotype.Component
  */
 @Component
 class WidgetMutation : Mutation {
-
     @GraphQLDescription("modifies passed in widget so it doesn't have null value")
-    fun processWidget(@GraphQLDescription("widget to be modified") widget: Widget): Widget {
+    fun processWidget(
+        @GraphQLDescription("widget to be modified") widget: Widget,
+    ): Widget {
         if (null == widget.value) {
             widget.value = 42
         }

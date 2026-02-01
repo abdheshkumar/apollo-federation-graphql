@@ -18,6 +18,8 @@ package com.expediagroup.graphql.examples.client.maven
 /**
  * Representation of a Product type entity.
  */
-data class ProductEntityRepresentation(val id: String) {
+data class ProductEntityRepresentation(
+    val id: String,
+) {
     val __typename: String = "Product"
 }

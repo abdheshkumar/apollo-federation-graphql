@@ -18,5 +18,5 @@ package com.expediagroup.graphql.examples.server.spring.model
 
 @JvmInline
 value class MyValueClass(
-    val value: String
+    val value: String,
 )

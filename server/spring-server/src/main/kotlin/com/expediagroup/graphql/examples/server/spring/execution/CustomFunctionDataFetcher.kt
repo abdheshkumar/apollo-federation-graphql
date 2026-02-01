@@ -28,11 +28,11 @@ import kotlin.reflect.KFunction
 class CustomFunctionDataFetcher(
     target: Any?,
     fn: KFunction<*>,
-    appContext: ApplicationContext
+    appContext: ApplicationContext,
 ) : SpringDataFetcher(target, fn, appContext) {
-
-    override fun get(environment: DataFetchingEnvironment): Any? = when (val result = super.get(environment)) {
-        is Mono<*> -> result.toFuture()
-        else -> result
-    }
+    override fun get(environment: DataFetchingEnvironment): Any? =
+        when (val result = super.get(environment)) {
+            is Mono<*> -> result.toFuture()
+            else -> result
+        }
 }

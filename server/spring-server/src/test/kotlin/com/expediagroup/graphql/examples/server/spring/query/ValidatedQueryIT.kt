@@ -34,14 +34,16 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class ValidatedQueryIT(@Autowired private val testClient: WebTestClient) {
-
+class ValidatedQueryIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @Test
     fun `verify argumentWithValidation query`() {
         val query = "argumentWithValidation"
         val argument = "hello"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
@@ -56,7 +58,8 @@ class ValidatedQueryIT(@Autowired private val testClient: WebTestClient) {
         val query = "argumentWithValidation"
         val expectedError = "argumentWithValidation.arg.lowerCaseOnly: Argument must be lowercase"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)

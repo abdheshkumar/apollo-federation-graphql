@@ -30,12 +30,11 @@ interface Animal {
 @GraphQLDescription("enum holding all supported animal types")
 enum class AnimalType {
     CAT,
-    DOG
+    DOG,
 }
 
 @GraphQLDescription("dog is one of the implementations of animal")
 class Dog : Animal {
-
     override val type: AnimalType
         get() = AnimalType.DOG
 

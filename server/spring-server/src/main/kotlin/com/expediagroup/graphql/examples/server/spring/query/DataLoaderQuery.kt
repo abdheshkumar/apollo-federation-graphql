@@ -32,16 +32,15 @@ import java.util.concurrent.CompletableFuture
  */
 @Component
 class DataLoaderQuery : Query {
-    private val employees = listOf(
-        Employee(name = "Mike", companyId = 1, skills = setOf("sales", "sales")),
-        Employee(name = "John", companyId = 1, skills = setOf("management")),
-        Employee(name = "Steve", companyId = 2)
-    )
+    private val employees =
+        listOf(
+            Employee(name = "Mike", companyId = 1, skills = setOf("sales", "sales")),
+            Employee(name = "John", companyId = 1, skills = setOf("management")),
+            Employee(name = "Steve", companyId = 2),
+        )
 
     @GraphQLDescription("Get all employees")
-    fun employees(): List<Employee> {
-        return employees
-    }
+    fun employees(): List<Employee> = employees
 }
 
 /**
@@ -49,7 +48,6 @@ class DataLoaderQuery : Query {
  */
 @Component("CompanyDataFetcher")
 class CompanyDataFetcher : DataFetcher<CompletableFuture<Company>> {
-
     override fun get(environment: DataFetchingEnvironment): CompletableFuture<Company> {
         val companyId = environment.getSource<Employee>()?.companyId ?: throw IllegalArgumentException("companyId is null")
         return environment.getValueFromDataLoader(CompanyDataLoader.name, companyId)

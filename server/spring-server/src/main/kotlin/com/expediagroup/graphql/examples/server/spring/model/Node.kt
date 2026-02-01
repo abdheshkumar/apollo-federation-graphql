@@ -24,5 +24,5 @@ data class Node(
     val id: Int,
     val value: String,
     val parent: Node?,
-    var children: List<Node>
+    var children: List<Node>,
 )

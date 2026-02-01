@@ -33,19 +33,22 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class RecursiveQueryIT(@Autowired private val testClient: WebTestClient) {
-
+class RecursiveQueryIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @Test
     fun `verify nodeGraph query`() {
         val query = "nodeGraph"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query { id, value, children { id, value, parent { id, value }, children { id, value } } } }")
             .exchange()
-            .expectStatus().isOk
+            .expectStatus()
+            .isOk
             .verifyOnlyDataExists(query)
             .verifyRoot(query, "0", "root", 2)
             .verifyChild(query, "0", "1", "A", "0", "root", 0)
@@ -57,13 +60,17 @@ class RecursiveQueryIT(@Autowired private val testClient: WebTestClient) {
         query: String,
         id: String,
         value: String,
-        childrenSize: Int
-    ): WebTestClient.BodyContentSpec {
-        return this.jsonPath("$DATA_JSON_PATH.$query.id").isEqualTo(id)
-            .jsonPath("$DATA_JSON_PATH.$query.value").isEqualTo(value)
-            .jsonPath("$DATA_JSON_PATH.$query.children").isArray
-            .jsonPath("$DATA_JSON_PATH.$query.children").value(hasSize<Int>(childrenSize))
-    }
+        childrenSize: Int,
+    ): WebTestClient.BodyContentSpec =
+        this
+            .jsonPath("$DATA_JSON_PATH.$query.id")
+            .isEqualTo(id)
+            .jsonPath("$DATA_JSON_PATH.$query.value")
+            .isEqualTo(value)
+            .jsonPath("$DATA_JSON_PATH.$query.children")
+            .isArray
+            .jsonPath("$DATA_JSON_PATH.$query.children")
+            .value(hasSize<Int>(childrenSize))
 
     private fun WebTestClient.BodyContentSpec.verifyChild(
         query: String,
@@ -72,25 +79,34 @@ class RecursiveQueryIT(@Autowired private val testClient: WebTestClient) {
         value: String,
         parentId: String,
         parentValue: String,
-        childrenSize: Int
-    ): WebTestClient.BodyContentSpec {
-        return this.jsonPath("$DATA_JSON_PATH.$query.children.[$index].id").isEqualTo(id)
-            .jsonPath("$DATA_JSON_PATH.$query.children.[$index].value").isEqualTo(value)
-            .jsonPath("$DATA_JSON_PATH.$query.children.[$index].parent").exists()
-            .jsonPath("$DATA_JSON_PATH.$query.children.[$index].parent.id").isEqualTo(parentId)
-            .jsonPath("$DATA_JSON_PATH.$query.children.[$index].parent.value").isEqualTo(parentValue)
-            .jsonPath("$DATA_JSON_PATH.$query.children.[$index].children").isArray
-            .jsonPath("$DATA_JSON_PATH.$query.children.[$index].children").value(hasSize<Int>(childrenSize))
-    }
+        childrenSize: Int,
+    ): WebTestClient.BodyContentSpec =
+        this
+            .jsonPath("$DATA_JSON_PATH.$query.children.[$index].id")
+            .isEqualTo(id)
+            .jsonPath("$DATA_JSON_PATH.$query.children.[$index].value")
+            .isEqualTo(value)
+            .jsonPath("$DATA_JSON_PATH.$query.children.[$index].parent")
+            .exists()
+            .jsonPath("$DATA_JSON_PATH.$query.children.[$index].parent.id")
+            .isEqualTo(parentId)
+            .jsonPath("$DATA_JSON_PATH.$query.children.[$index].parent.value")
+            .isEqualTo(parentValue)
+            .jsonPath("$DATA_JSON_PATH.$query.children.[$index].children")
+            .isArray
+            .jsonPath("$DATA_JSON_PATH.$query.children.[$index].children")
+            .value(hasSize<Int>(childrenSize))
 
     private fun WebTestClient.BodyContentSpec.verifySubChild(
         query: String,
         parentIndex: String,
         index: String,
         id: String,
-        value: String
-    ): WebTestClient.BodyContentSpec {
-        return this.jsonPath("$DATA_JSON_PATH.$query.children.[$parentIndex].children.[$index].id").isEqualTo(id)
-            .jsonPath("$DATA_JSON_PATH.$query.children.[$parentIndex].children.[$index].value").isEqualTo(value)
-    }
+        value: String,
+    ): WebTestClient.BodyContentSpec =
+        this
+            .jsonPath("$DATA_JSON_PATH.$query.children.[$parentIndex].children.[$index].id")
+            .isEqualTo(id)
+            .jsonPath("$DATA_JSON_PATH.$query.children.[$parentIndex].children.[$index].value")
+            .isEqualTo(value)
 }

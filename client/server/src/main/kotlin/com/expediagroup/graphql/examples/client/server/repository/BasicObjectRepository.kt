@@ -21,7 +21,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class BasicObjectRepository {
-
     private val objectRepository = mutableMapOf<Int, BasicObject>()
 
     fun get(id: Int): BasicObject? = objectRepository[id]

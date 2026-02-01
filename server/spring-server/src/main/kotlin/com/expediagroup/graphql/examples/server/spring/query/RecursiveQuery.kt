@@ -23,7 +23,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class RecursiveQuery : Query {
-
     private final val root = Node(id = 0, value = "root", parent = null, children = emptyList())
     private final val nodeA = Node(id = 1, value = "A", parent = root, children = emptyList())
     private final val nodeB = Node(id = 2, value = "B", parent = root, children = emptyList())

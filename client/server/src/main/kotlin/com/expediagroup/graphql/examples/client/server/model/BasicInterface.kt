@@ -22,6 +22,7 @@ import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 interface BasicInterface {
     @GraphQLDescription("Unique identifier of an interface")
     val id: Int
+
     @GraphQLDescription("Name field")
     val name: String
 }
@@ -33,7 +34,7 @@ data class FirstInterfaceImplementation(
     @GraphQLDescription("Name of the first implementation")
     override val name: String,
     @GraphQLDescription("Custom field integer value")
-    val intValue: Int
+    val intValue: Int,
 ) : BasicInterface
 
 @GraphQLDescription("Example interface implementation where value is a float")
@@ -43,5 +44,5 @@ data class SecondInterfaceImplementation(
     @GraphQLDescription("Name of the second implementation")
     override val name: String,
     @GraphQLDescription("Custom field float value")
-    val floatValue: Float
+    val floatValue: Float,
 ) : BasicInterface

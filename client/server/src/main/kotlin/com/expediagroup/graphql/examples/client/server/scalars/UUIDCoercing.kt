@@ -24,31 +24,46 @@ import graphql.schema.Coercing
 import graphql.schema.CoercingParseLiteralException
 import graphql.schema.CoercingParseValueException
 import graphql.schema.GraphQLScalarType
-import java.util.UUID
 import java.util.Locale
+import java.util.UUID
 
-internal val graphqlUUIDType = GraphQLScalarType.newScalar()
-    .name("UUID")
-    .description("Custom scalar representing UUID")
-    .coercing(object : Coercing<UUID, String> {
-        override fun parseValue(input: Any, graphQLContext: GraphQLContext, locale: Locale): UUID =
-            try {
-                UUID.fromString(
-                    serialize(input, graphQLContext, locale)
-                )
-            } catch (e: Exception) {
-                throw CoercingParseValueException("Cannot parse value $input to UUID", e)
-            }
+internal val graphqlUUIDType =
+    GraphQLScalarType
+        .newScalar()
+        .name("UUID")
+        .description("Custom scalar representing UUID")
+        .coercing(
+            object : Coercing<UUID, String> {
+                override fun parseValue(
+                    input: Any,
+                    graphQLContext: GraphQLContext,
+                    locale: Locale,
+                ): UUID =
+                    try {
+                        UUID.fromString(
+                            serialize(input, graphQLContext, locale),
+                        )
+                    } catch (e: Exception) {
+                        throw CoercingParseValueException("Cannot parse value $input to UUID", e)
+                    }
 
-        override fun parseLiteral(input: Value<*>, variables: CoercedVariables, graphQLContext: GraphQLContext, locale: Locale): UUID =
-            try {
-                val uuidString = (input as? StringValue)?.value
-                UUID.fromString(uuidString)
-            } catch (e: Exception) {
-                throw CoercingParseLiteralException("Cannot parse literal $input to UUID", e)
-            }
+                override fun parseLiteral(
+                    input: Value<*>,
+                    variables: CoercedVariables,
+                    graphQLContext: GraphQLContext,
+                    locale: Locale,
+                ): UUID =
+                    try {
+                        val uuidString = (input as? StringValue)?.value
+                        UUID.fromString(uuidString)
+                    } catch (e: Exception) {
+                        throw CoercingParseLiteralException("Cannot parse literal $input to UUID", e)
+                    }
 
-        override fun serialize(dataFetcherResult: Any, graphQLContext: GraphQLContext, locale: Locale): String =
-            dataFetcherResult.toString()
-    })
-    .build()
+                override fun serialize(
+                    dataFetcherResult: Any,
+                    graphQLContext: GraphQLContext,
+                    locale: Locale,
+                ): String = dataFetcherResult.toString()
+            },
+        ).build()

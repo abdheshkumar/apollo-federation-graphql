@@ -32,39 +32,50 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class NestedQueriesIT(@Autowired private val testClient: WebTestClient) {
-
+class NestedQueriesIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @Test
     fun `verify findAnimal query`() {
         val query = "findAnimal"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query { details { veryDetailedFunction }, id, animalType } }")
             .exchange()
-            .expectStatus().isOk
+            .expectStatus()
+            .isOk
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.details").exists()
-            .jsonPath("$DATA_JSON_PATH.$query.details.veryDetailedFunction").isEqualTo("Details(1)")
-            .jsonPath("$DATA_JSON_PATH.$query.id").isEqualTo("1")
-            .jsonPath("$DATA_JSON_PATH.$query.animalType").isEqualTo("cat")
+            .jsonPath("$DATA_JSON_PATH.$query.details")
+            .exists()
+            .jsonPath("$DATA_JSON_PATH.$query.details.veryDetailedFunction")
+            .isEqualTo("Details(1)")
+            .jsonPath("$DATA_JSON_PATH.$query.id")
+            .isEqualTo("1")
+            .jsonPath("$DATA_JSON_PATH.$query.animalType")
+            .isEqualTo("cat")
     }
 
     @Test
     fun `verify getCoffeeBean query`() {
         val query = "getCoffeeBean"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query(beanName: \"arabica\") { hotCoffee(size: \"small\"), icedCoffee(size: \"large\") } }")
             .exchange()
-            .expectStatus().isOk
+            .expectStatus()
+            .isOk
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.hotCoffee").isEqualTo("Hot Coffee, Bean choice: arabica, size: small")
-            .jsonPath("$DATA_JSON_PATH.$query.icedCoffee").isEqualTo("Iced Coffee, Bean choice: arabica, size: large")
+            .jsonPath("$DATA_JSON_PATH.$query.hotCoffee")
+            .isEqualTo("Hot Coffee, Bean choice: arabica, size: small")
+            .jsonPath("$DATA_JSON_PATH.$query.icedCoffee")
+            .isEqualTo("Iced Coffee, Bean choice: arabica, size: large")
     }
 }

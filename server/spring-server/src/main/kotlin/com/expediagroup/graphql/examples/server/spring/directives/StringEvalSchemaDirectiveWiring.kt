@@ -31,23 +31,31 @@ class StringEvalSchemaDirectiveWiring : KotlinSchemaDirectiveWiring {
         val field = environment.element
         val originalDataFetcher: DataFetcher<*> = environment.getDataFetcher()
 
-        val defaultValueFetcher = DataFetcher<Any> { dataEnv ->
-            val newArguments = HashMap(dataEnv.arguments)
-            environment.element.arguments.associateWith {
-                dataEnv.getArgument(it.name) as String?
-            }.forEach { (graphQLArgumentType, value) ->
-                if (graphQLArgumentType.getAppliedDirective(directiveName).getArgument(StringEval::lowerCase.name).argumentValue.value as Boolean) {
-                    newArguments[graphQLArgumentType.name] = value?.lowercase()
-                }
-                if (value.isNullOrEmpty()) {
-                    newArguments[graphQLArgumentType.name] = graphQLArgumentType.argumentDefaultValue.value
-                }
+        val defaultValueFetcher =
+            DataFetcher<Any> { dataEnv ->
+                val newArguments = HashMap(dataEnv.arguments)
+                environment.element.arguments
+                    .associateWith {
+                        dataEnv.getArgument(it.name) as String?
+                    }.forEach { (graphQLArgumentType, value) ->
+                        if (graphQLArgumentType
+                                .getAppliedDirective(
+                                    directiveName,
+                                ).getArgument(StringEval::lowerCase.name)
+                                .argumentValue.value as Boolean
+                        ) {
+                            newArguments[graphQLArgumentType.name] = value?.lowercase()
+                        }
+                        if (value.isNullOrEmpty()) {
+                            newArguments[graphQLArgumentType.name] = graphQLArgumentType.argumentDefaultValue.value
+                        }
+                    }
+                val newEnv =
+                    newDataFetchingEnvironment(dataEnv)
+                        .arguments(newArguments)
+                        .build()
+                originalDataFetcher.get(newEnv)
             }
-            val newEnv = newDataFetchingEnvironment(dataEnv)
-                .arguments(newArguments)
-                .build()
-            originalDataFetcher.get(newEnv)
-        }
         environment.setDataFetcher(defaultValueFetcher)
         return field
     }

@@ -36,14 +36,16 @@ import java.util.stream.Stream
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class CustomDirectiveQueryIT(@Autowired private val testClient: WebTestClient) {
-
+class CustomDirectiveQueryIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @Test
     fun `verify justWhisper query`() {
         val query = "justWhisper"
         val expectedData = "hello"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
@@ -57,7 +59,8 @@ class CustomDirectiveQueryIT(@Autowired private val testClient: WebTestClient) {
         val query = "justWhisper"
         val expectedData = "default string"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
@@ -68,10 +71,14 @@ class CustomDirectiveQueryIT(@Autowired private val testClient: WebTestClient) {
 
     @ParameterizedTest
     @MethodSource("specificValueOnlyQueries")
-    fun `verify specific value only queries`(query: String, msg: String) {
+    fun `verify specific value only queries`(
+        query: String,
+        msg: String,
+    ) {
         val expectedData = "<3"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
@@ -82,11 +89,15 @@ class CustomDirectiveQueryIT(@Autowired private val testClient: WebTestClient) {
 
     @ParameterizedTest
     @MethodSource("specificValueOnlyQueries")
-    fun `verify specific value only queries with another value`(query: String, expectedValue: String) {
+    fun `verify specific value only queries with another value`(
+        query: String,
+        expectedValue: String,
+    ) {
         val anotherValue = "hello"
         val expectedError = "Unsupported value, expected=$expectedValue actual=$anotherValue"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
@@ -100,7 +111,8 @@ class CustomDirectiveQueryIT(@Autowired private val testClient: WebTestClient) {
         val query = "forceLowercaseEcho"
         val expectedData = "hello"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
@@ -110,8 +122,9 @@ class CustomDirectiveQueryIT(@Autowired private val testClient: WebTestClient) {
     }
 
     @Suppress("UnusedPrivateMember")
-    private fun specificValueOnlyQueries() = Stream.of(
-        Arguments.of("onlyCake", "cake"),
-        Arguments.of("onlyIceCream", "icecream")
-    )
+    private fun specificValueOnlyQueries() =
+        Stream.of(
+            Arguments.of("onlyCake", "cake"),
+            Arguments.of("onlyIceCream", "icecream"),
+        )
 }

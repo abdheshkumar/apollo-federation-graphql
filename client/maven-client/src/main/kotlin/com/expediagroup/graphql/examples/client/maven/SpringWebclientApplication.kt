@@ -42,26 +42,32 @@ fun main() {
      * https://github.com/dariuszkuc/graphql-kotlin/blob/client-custom-scalars/examples/client/server/src/main/kotlin/com/expediagroup/graphql/examples/client/server/Application.kt
      * ************************************************************
      */
-    val httpClient: HttpClient = HttpClient.create()
-        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10_000)
-        .responseTimeout(Duration.ofMillis(60_000))
+    val httpClient: HttpClient =
+        HttpClient
+            .create()
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10_000)
+            .responseTimeout(Duration.ofMillis(60_000))
     val connector: ClientHttpConnector = ReactorClientHttpConnector(httpClient.wiretap(true))
-    val webClientBuilder = WebClient.builder()
-        .clientConnector(connector)
+    val webClientBuilder =
+        WebClient
+            .builder()
+            .clientConnector(connector)
 
-    val client = GraphQLWebClient(
-        url = "http://localhost:8080/graphql",
-        builder = webClientBuilder
-    )
+    val client =
+        GraphQLWebClient(
+            url = "http://localhost:8080/graphql",
+            builder = webClientBuilder,
+        )
 
     println("HelloWorld examples")
     runBlocking {
-        val results = client.execute(
-            listOf(
-                HelloWorldQuery(variables = HelloWorldQuery.Variables()),
-                HelloWorldQuery(variables = HelloWorldQuery.Variables(name = OptionalInput.Defined("Dariusz")))
+        val results =
+            client.execute(
+                listOf(
+                    HelloWorldQuery(variables = HelloWorldQuery.Variables()),
+                    HelloWorldQuery(variables = HelloWorldQuery.Variables(name = OptionalInput.Defined("Dariusz"))),
+                ),
             )
-        )
 
         val resultsNoParam = results[0].data as? HelloWorldQuery.Result
         val resultsWithParam = results[1].data as? HelloWorldQuery.Result
@@ -78,13 +84,24 @@ fun main() {
         val addResult = client.execute(AddObjectMutation(variables = AddObjectMutation.Variables(newObject = BasicObjectInput(1, "first"))))
         println("\tadd new object: ${addResult.data?.addBasicObject}")
 
-        val updateResult = client.execute(UpdateObjectMutation(variables = UpdateObjectMutation.Variables(updatedObject = BasicObjectInput(1, "updated"))))
+        val updateResult =
+            client.execute(
+                UpdateObjectMutation(variables = UpdateObjectMutation.Variables(updatedObject = BasicObjectInput(1, "updated"))),
+            )
         println("\tupdate new object: ${updateResult.data?.updateBasicObject}")
     }
 
     println("additional examples")
     runBlocking {
-        val exampleData = client.execute(ExampleQuery(variables = ExampleQuery.Variables(simpleCriteria = OptionalInput.Defined(SimpleArgumentInput(max = OptionalInput.Defined(1.0))))))
+        val exampleData =
+            client.execute(
+                ExampleQuery(
+                    variables =
+                        ExampleQuery.Variables(
+                            simpleCriteria = OptionalInput.Defined(SimpleArgumentInput(max = OptionalInput.Defined(1.0))),
+                        ),
+                ),
+            )
         println("\tretrieved interface: ${exampleData.data?.interfaceQuery} ")
         println("\tretrieved union: ${exampleData.data?.unionQuery} ")
         println("\tretrieved enum: ${exampleData.data?.enumQuery} ")
@@ -93,7 +110,12 @@ fun main() {
 
     println("entities query")
     runBlocking {
-        val entityData = client.execute(EntitiesQuery(variables = EntitiesQuery.Variables(representations = listOf(ProductEntityRepresentation(id = "apollo-federation")))))
+        val entityData =
+            client.execute(
+                EntitiesQuery(
+                    variables = EntitiesQuery.Variables(representations = listOf(ProductEntityRepresentation(id = "apollo-federation"))),
+                ),
+            )
         val product = entityData.data?._entities?.get(0) as? Product
         println("\tretrieved product SKU: ${product?.sku}")
         println("\tretrieved product package: ${product?.`package`}")

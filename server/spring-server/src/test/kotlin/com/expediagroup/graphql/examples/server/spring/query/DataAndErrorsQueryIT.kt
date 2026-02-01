@@ -34,24 +34,30 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class DataAndErrorsQueryIT(@Autowired private val testClient: WebTestClient) {
-
+class DataAndErrorsQueryIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @ParameterizedTest
     @ValueSource(strings = ["returnDataAndErrors", "completableFutureDataAndErrors"])
     fun `verify data and errors queries`(query: String) {
         val expectedData = "Hello from data fetcher"
         val expectedError = "data and errors"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query }")
             .exchange()
-            .expectStatus().isOk
+            .expectStatus()
+            .isOk
             .expectBody()
-            .jsonPath("$DATA_JSON_PATH.$query").isEqualTo(expectedData)
-            .jsonPath("$ERRORS_JSON_PATH.[0].message").isEqualTo(expectedError)
-            .jsonPath(EXTENSIONS_JSON_PATH).doesNotExist()
+            .jsonPath("$DATA_JSON_PATH.$query")
+            .isEqualTo(expectedData)
+            .jsonPath("$ERRORS_JSON_PATH.[0].message")
+            .isEqualTo(expectedError)
+            .jsonPath(EXTENSIONS_JSON_PATH)
+            .doesNotExist()
     }
 }

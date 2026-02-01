@@ -17,18 +17,20 @@
 package com.expediagroup.graphql.examples.server.spring.query
 
 import com.expediagroup.graphql.server.operations.Query
-import org.springframework.stereotype.Component
-import org.springframework.validation.annotation.Validated
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Pattern
+import org.springframework.stereotype.Component
+import org.springframework.validation.annotation.Validated
 
 @Validated
 @Component
 class ValidatedQuery : Query {
-    fun argumentWithValidation(@Valid arg: TypeWithPattern): String = arg.lowerCaseOnly
+    fun argumentWithValidation(
+        @Valid arg: TypeWithPattern,
+    ): String = arg.lowerCaseOnly
 }
 
 data class TypeWithPattern(
     @field:Pattern(regexp = "^[a-z]+$", message = "Argument must be lowercase")
-    val lowerCaseOnly: String
+    val lowerCaseOnly: String,
 )

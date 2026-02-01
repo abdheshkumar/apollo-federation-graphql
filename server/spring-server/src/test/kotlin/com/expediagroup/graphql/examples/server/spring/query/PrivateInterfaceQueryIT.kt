@@ -32,21 +32,26 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class PrivateInterfaceQueryIT(@Autowired private val testClient: WebTestClient) {
-
+class PrivateInterfaceQueryIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @Test
     fun `verify queryForObjectWithPrivateInterface query`() {
         val query = "queryForObjectWithPrivateInterface"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query { id, value } }")
             .exchange()
-            .expectStatus().isOk
+            .expectStatus()
+            .isOk
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.id").isEqualTo("123")
-            .jsonPath("$DATA_JSON_PATH.$query.value").isEqualTo("Implementation of a method from a private interface")
+            .jsonPath("$DATA_JSON_PATH.$query.id")
+            .isEqualTo("123")
+            .jsonPath("$DATA_JSON_PATH.$query.value")
+            .isEqualTo("Implementation of a method from a private interface")
     }
 }

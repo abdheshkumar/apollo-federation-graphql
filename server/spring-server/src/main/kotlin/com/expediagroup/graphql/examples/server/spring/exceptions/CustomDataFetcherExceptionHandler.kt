@@ -33,21 +33,25 @@ import java.util.concurrent.CompletableFuture
 class CustomDataFetcherExceptionHandler : DataFetcherExceptionHandler {
     private val log = LoggerFactory.getLogger(CustomDataFetcherExceptionHandler::class.java)
 
-    override fun handleException(handlerParameters: DataFetcherExceptionHandlerParameters): CompletableFuture<DataFetcherExceptionHandlerResult> {
+    override fun handleException(
+        handlerParameters: DataFetcherExceptionHandlerParameters,
+    ): CompletableFuture<DataFetcherExceptionHandlerResult> {
         val exception = handlerParameters.exception
         val sourceLocation = handlerParameters.sourceLocation
         val path = handlerParameters.path
 
-        val error: GraphQLError = when (exception) {
-            is ValidationException -> ValidationDataFetchingGraphQLError(exception.constraintErrors, path, exception, sourceLocation)
-            else ->
-                GraphqlErrorException.newErrorException()
-                    .cause(exception)
-                    .message(exception.message)
-                    .sourceLocation(sourceLocation)
-                    .path(path.toList())
-                    .build()
-        }
+        val error: GraphQLError =
+            when (exception) {
+                is ValidationException -> ValidationDataFetchingGraphQLError(exception.constraintErrors, path, exception, sourceLocation)
+                else ->
+                    GraphqlErrorException
+                        .newErrorException()
+                        .cause(exception)
+                        .message(exception.message)
+                        .sourceLocation(sourceLocation)
+                        .path(path.toList())
+                        .build()
+            }
 
         log.warn(error.message, exception)
         val exceptionResult = DataFetcherExceptionHandlerResult.newResult().error(error).build()
@@ -60,11 +64,11 @@ class ValidationDataFetchingGraphQLError(
     val constraintErrors: List<ConstraintError>,
     path: ResultPath,
     exception: Throwable,
-    sourceLocation: SourceLocation
+    sourceLocation: SourceLocation,
 ) : ExceptionWhileDataFetching(
-    path,
-    exception,
-    sourceLocation
-) {
+        path,
+        exception,
+        sourceLocation,
+    ) {
     override fun getErrorType(): ErrorType = ValidationError
 }

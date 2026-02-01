@@ -30,7 +30,9 @@ import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
 @Component
-class NestedQueries(private val coffeeBean: CoffeeBean) : Query {
+class NestedQueries(
+    private val coffeeBean: CoffeeBean,
+) : Query {
     fun findAnimal(): NestedAnimal = NestedAnimal(1, "cat")
 
     @GraphQLDescription("An example of using data fetcher with out a bean factory")
@@ -40,7 +42,7 @@ class NestedQueries(private val coffeeBean: CoffeeBean) : Query {
 data class NestedAnimal(
     val id: Int,
     @GraphQLName("animalType")
-    val type: String
+    val type: String,
 ) {
     @JsonIgnore
     lateinit var details: NestedAnimalDetails
@@ -48,14 +50,19 @@ data class NestedAnimal(
 
 @Component
 @Scope("prototype")
-data class NestedAnimalDetails @Autowired(required = false) constructor(private val animalId: Int) {
-    fun veryDetailedFunction(): String = "Details($animalId)"
-}
+data class NestedAnimalDetails
+    @Autowired(required = false)
+    constructor(
+        private val animalId: Int,
+    ) {
+        fun veryDetailedFunction(): String = "Details($animalId)"
+    }
 
 @Component("NestedAnimalDetailsDataFetcher")
 @Scope("prototype")
-class AnimalDetailsDataFetcher : DataFetcher<NestedAnimalDetails>, BeanFactoryAware {
-
+class AnimalDetailsDataFetcher :
+    DataFetcher<NestedAnimalDetails>,
+    BeanFactoryAware {
     private lateinit var beanFactory: BeanFactory
 
     override fun setBeanFactory(beanFactory: BeanFactory) {
@@ -75,13 +82,18 @@ class AnimalDetailsDataFetcher : DataFetcher<NestedAnimalDetails>, BeanFactoryAw
 
 @Component
 class CoffeeBean {
-
-    fun icedCoffee(environment: DataFetchingEnvironment, size: String): String {
+    fun icedCoffee(
+        environment: DataFetchingEnvironment,
+        size: String,
+    ): String {
         val beanChoice = environment.executionStepInfo.parent.arguments["beanName"]
         return "Iced Coffee, Bean choice: $beanChoice, size: $size"
     }
 
-    fun hotCoffee(environment: DataFetchingEnvironment, size: String): String {
+    fun hotCoffee(
+        environment: DataFetchingEnvironment,
+        size: String,
+    ): String {
         val beanChoice = environment.executionStepInfo.parent.arguments["beanName"]
         return "Hot Coffee, Bean choice: $beanChoice, size: $size"
     }

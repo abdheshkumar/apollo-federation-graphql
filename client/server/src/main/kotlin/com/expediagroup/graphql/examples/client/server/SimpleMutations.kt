@@ -23,8 +23,9 @@ import com.expediagroup.graphql.server.operations.Mutation
 import org.springframework.stereotype.Component
 
 @Component
-class SimpleMutations(private val repository: BasicObjectRepository) : Mutation {
-
+class SimpleMutations(
+    private val repository: BasicObjectRepository,
+) : Mutation {
     @GraphQLDescription("Add object to the repository")
     fun addBasicObject(newObject: BasicObject): BasicObject? = repository.add(newObject)
 

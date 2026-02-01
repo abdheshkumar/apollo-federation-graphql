@@ -32,38 +32,47 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class ContextualQueryIT(@Autowired private val testClient: WebTestClient) {
-
+class ContextualQueryIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @Test
     fun `verify contextualQuery query`() {
         val query = "contextualQuery"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query(value: 1) { contextValue, passedInValue } }")
             .exchange()
-            .expectStatus().isOk
+            .expectStatus()
+            .isOk
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.contextValue").isEqualTo("defaultContext")
-            .jsonPath("$DATA_JSON_PATH.$query.passedInValue").isEqualTo("1")
+            .jsonPath("$DATA_JSON_PATH.$query.contextValue")
+            .isEqualTo("defaultContext")
+            .jsonPath("$DATA_JSON_PATH.$query.passedInValue")
+            .isEqualTo("1")
     }
 
     @Test
     fun `verify contextualQuery query with context value`() {
         val query = "contextualQuery"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .header("MyHeader", "hello")
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query(value: 1) { contextValue, passedInValue } }")
             .exchange()
-            .expectStatus().isOk
+            .expectStatus()
+            .isOk
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.contextValue").isEqualTo("hello")
-            .jsonPath("$DATA_JSON_PATH.$query.passedInValue").isEqualTo("1")
+            .jsonPath("$DATA_JSON_PATH.$query.contextValue")
+            .isEqualTo("hello")
+            .jsonPath("$DATA_JSON_PATH.$query.passedInValue")
+            .isEqualTo("1")
     }
 }

@@ -33,40 +33,51 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class PolymorphicQueryIT(@Autowired private val testClient: WebTestClient) {
-
+class PolymorphicQueryIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @Test
     fun `verify animal query with CAT`() {
         val query = "animal"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query(type: CAT) { type, sound, ... on Cat { ignoreEveryone } } }")
             .exchange()
-            .expectStatus().isOk
+            .expectStatus()
+            .isOk
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.type").isEqualTo("CAT")
-            .jsonPath("$DATA_JSON_PATH.$query.sound").isEqualTo("meow")
-            .jsonPath("$DATA_JSON_PATH.$query.ignoreEveryone").isEqualTo("ignore everyone")
+            .jsonPath("$DATA_JSON_PATH.$query.type")
+            .isEqualTo("CAT")
+            .jsonPath("$DATA_JSON_PATH.$query.sound")
+            .isEqualTo("meow")
+            .jsonPath("$DATA_JSON_PATH.$query.ignoreEveryone")
+            .isEqualTo("ignore everyone")
     }
 
     @Test
     fun `verify animal query with DOG`() {
         val query = "animal"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query(type: DOG) { type, sound, ... on Dog { doSomethingUseful } } }")
             .exchange()
-            .expectStatus().isOk
+            .expectStatus()
+            .isOk
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.type").isEqualTo("DOG")
-            .jsonPath("$DATA_JSON_PATH.$query.sound").isEqualTo("bark")
-            .jsonPath("$DATA_JSON_PATH.$query.doSomethingUseful").isEqualTo("something useful")
+            .jsonPath("$DATA_JSON_PATH.$query.type")
+            .isEqualTo("DOG")
+            .jsonPath("$DATA_JSON_PATH.$query.sound")
+            .isEqualTo("bark")
+            .jsonPath("$DATA_JSON_PATH.$query.doSomethingUseful")
+            .isEqualTo("something useful")
     }
 
     @Test
@@ -74,19 +85,21 @@ class PolymorphicQueryIT(@Autowired private val testClient: WebTestClient) {
         val query = "animal"
         val unknownType = "HELLO"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query(type: $unknownType) { type, sound } }")
             .exchange()
-            .expectStatus().isOk
+            .expectStatus()
+            .isOk
             .verifyError("Validation error")
             .verifyError("WrongType")
             .verifyError(
                 "Validation error (WrongType@[animal]) : " +
                     "argument 'type' with value 'EnumValue{name='HELLO'}' is not a valid 'AnimalType' - " +
-                    "Literal value not in allowable values for enum 'AnimalType' - 'EnumValue{name='HELLO'}'"
+                    "Literal value not in allowable values for enum 'AnimalType' - 'EnumValue{name='HELLO'}'",
             )
     }
 
@@ -94,48 +107,61 @@ class PolymorphicQueryIT(@Autowired private val testClient: WebTestClient) {
     fun `verify dog query`() {
         val query = "dog"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query { type, sound, doSomethingUseful } }")
             .exchange()
-            .expectStatus().isOk
+            .expectStatus()
+            .isOk
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.type").isEqualTo("DOG")
-            .jsonPath("$DATA_JSON_PATH.$query.sound").isEqualTo("bark")
-            .jsonPath("$DATA_JSON_PATH.$query.doSomethingUseful").isEqualTo("something useful")
+            .jsonPath("$DATA_JSON_PATH.$query.type")
+            .isEqualTo("DOG")
+            .jsonPath("$DATA_JSON_PATH.$query.sound")
+            .isEqualTo("bark")
+            .jsonPath("$DATA_JSON_PATH.$query.doSomethingUseful")
+            .isEqualTo("something useful")
     }
 
     @Test
     fun `verify whichHand query`() {
         val query = "whichHand"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query(whichHand: \"right\") { __typename ... on RightHand { property } ... on LeftHand { field } } }")
             .exchange()
-            .expectStatus().isOk
+            .expectStatus()
+            .isOk
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.__typename").isEqualTo("RightHand")
-            .jsonPath("$DATA_JSON_PATH.$query.property").isEqualTo("12")
+            .jsonPath("$DATA_JSON_PATH.$query.__typename")
+            .isEqualTo("RightHand")
+            .jsonPath("$DATA_JSON_PATH.$query.property")
+            .isEqualTo("12")
     }
 
     @Test
     fun `verify whichHand query with another union type`() {
         val query = "whichHand"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query(whichHand: \"hello\") { __typename ... on RightHand { property } ... on LeftHand { field } } }")
             .exchange()
-            .expectStatus().isOk
+            .expectStatus()
+            .isOk
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.__typename").isEqualTo("LeftHand")
-            .jsonPath("$DATA_JSON_PATH.$query.field").isEqualTo("hello world")
+            .jsonPath("$DATA_JSON_PATH.$query.__typename")
+            .isEqualTo("LeftHand")
+            .jsonPath("$DATA_JSON_PATH.$query.field")
+            .isEqualTo("hello world")
     }
 }

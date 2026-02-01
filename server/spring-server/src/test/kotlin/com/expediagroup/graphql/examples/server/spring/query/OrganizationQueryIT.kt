@@ -33,22 +33,27 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class OrganizationQueryIT(@Autowired private val testClient: WebTestClient) {
-
+class OrganizationQueryIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @Test
     fun `verify employees query`() {
         val query = "employees"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query { name, company { id, name } } }")
             .exchange()
-            .expectStatus().isOk
+            .expectStatus()
+            .isOk
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query").isArray
-            .jsonPath("$DATA_JSON_PATH.$query").value(hasSize<Int>(3))
+            .jsonPath("$DATA_JSON_PATH.$query")
+            .isArray
+            .jsonPath("$DATA_JSON_PATH.$query")
+            .value(hasSize<Int>(3))
             .verifyEmployee(query, 0, "Mike", "1", "FirstCompany")
             .verifyEmployee(query, 1, "John", "1", "FirstCompany")
             .verifyEmployee(query, 2, "Steve", "2", "SecondCompany")
@@ -59,11 +64,15 @@ class OrganizationQueryIT(@Autowired private val testClient: WebTestClient) {
         employeeIndex: Int,
         employeeName: String,
         companyId: String,
-        companyName: String
-    ): WebTestClient.BodyContentSpec {
-        return this.jsonPath("$DATA_JSON_PATH.$query.[$employeeIndex].name").isEqualTo(employeeName)
-            .jsonPath("$DATA_JSON_PATH.$query.[$employeeIndex].company").exists()
-            .jsonPath("$DATA_JSON_PATH.$query.[$employeeIndex].company.id").isEqualTo(companyId)
-            .jsonPath("$DATA_JSON_PATH.$query.[$employeeIndex].company.name").isEqualTo(companyName)
-    }
+        companyName: String,
+    ): WebTestClient.BodyContentSpec =
+        this
+            .jsonPath("$DATA_JSON_PATH.$query.[$employeeIndex].name")
+            .isEqualTo(employeeName)
+            .jsonPath("$DATA_JSON_PATH.$query.[$employeeIndex].company")
+            .exists()
+            .jsonPath("$DATA_JSON_PATH.$query.[$employeeIndex].company.id")
+            .isEqualTo(companyId)
+            .jsonPath("$DATA_JSON_PATH.$query.[$employeeIndex].company.name")
+            .isEqualTo(companyName)
 }

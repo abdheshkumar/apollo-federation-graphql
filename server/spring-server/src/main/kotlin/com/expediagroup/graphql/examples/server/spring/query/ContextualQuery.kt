@@ -28,11 +28,10 @@ import org.springframework.stereotype.Component
  */
 @Component
 class ContextualQuery : Query {
-
     @GraphQLDescription("query that uses GraphQLContext context")
     fun contextualQuery(
         @GraphQLDescription("some value that will be returned to the user")
         value: Int,
-        env: DataFetchingEnvironment
+        env: DataFetchingEnvironment,
     ): ContextualResponse = ContextualResponse(value, env.graphQlContext.getOrDefault("myCustomValue", "defaultValue"))
 }

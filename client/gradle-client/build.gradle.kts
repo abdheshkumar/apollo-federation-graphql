@@ -7,10 +7,9 @@ description = "Example usage of Gradle plugin to generate GraphQL Kotlin Client"
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.ktlint)
     alias(libs.plugins.graphql.kotlin)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.ktlint)
-    alias(libs.plugins.detekt)
     application
 }
 
@@ -38,11 +37,24 @@ graphql {
         // optional
         allowDeprecatedFields = true
         headers = mapOf("X-Custom-Header" to "My-Custom-Header")
-        customScalars = listOf(
-            GraphQLScalar("_Any", "kotlinx.serialization.json.JsonObject", "com.expediagroup.graphql.examples.client.gradle.AnyScalarConverter"),
-            GraphQLScalar("Locale", "com.ibm.icu.util.ULocale", "com.expediagroup.graphql.examples.client.gradle.ULocaleScalarConverter"),
-            GraphQLScalar("UUID", "java.util.UUID", "com.expediagroup.graphql.examples.client.gradle.UUIDScalarConverter"),
-        )
+        customScalars =
+            listOf(
+                GraphQLScalar(
+                    "_Any",
+                    "kotlinx.serialization.json.JsonObject",
+                    "com.expediagroup.graphql.examples.client.gradle.AnyScalarConverter",
+                ),
+                GraphQLScalar(
+                    "Locale",
+                    "com.ibm.icu.util.ULocale",
+                    "com.expediagroup.graphql.examples.client.gradle.ULocaleScalarConverter",
+                ),
+                GraphQLScalar(
+                    "UUID",
+                    "java.util.UUID",
+                    "com.expediagroup.graphql.examples.client.gradle.UUIDScalarConverter",
+                ),
+            )
         serializer = GraphQLSerializer.KOTLINX
     }
 }
@@ -66,6 +78,8 @@ tasks.jar {
     enabled = false
 }
 
+
+
 ktlint {
     version.set(libs.versions.ktlint.core.get())
     filter {
@@ -73,6 +87,3 @@ ktlint {
     }
 }
 
-detekt {
-    toolVersion = libs.versions.detekt.get()
-}

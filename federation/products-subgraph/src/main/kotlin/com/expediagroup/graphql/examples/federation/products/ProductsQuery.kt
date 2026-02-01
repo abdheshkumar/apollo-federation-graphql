@@ -24,15 +24,15 @@ import org.springframework.stereotype.Component
 
 @Component
 class ProductsQuery : Query {
-
-    private val products = mapOf(
-        "1" to Product(ID("1"), "Saturn V", "The Original Super Heavy-Lift Rocket!"),
-        "2" to Product(ID("2"), "Lunar Module"),
-        "3" to Product(ID("3"), "Space Shuttle"),
-        "4" to Product(ID("4"), "Falcon 9", "Reusable Medium-Lift Rocket"),
-        "5" to Product(ID("5"), "Dragon", "Reusable Medium-Lift Rocket"),
-        "6" to Product(ID("6"), "Starship", "Super Heavy-Lift Reusable Launch Vehicle")
-    )
+    private val products =
+        mapOf(
+            "1" to Product(ID("1"), "Saturn V", "The Original Super Heavy-Lift Rocket!"),
+            "2" to Product(ID("2"), "Lunar Module"),
+            "3" to Product(ID("3"), "Space Shuttle"),
+            "4" to Product(ID("4"), "Falcon 9", "Reusable Medium-Lift Rocket"),
+            "5" to Product(ID("5"), "Dragon", "Reusable Medium-Lift Rocket"),
+            "6" to Product(ID("6"), "Starship", "Super Heavy-Lift Reusable Launch Vehicle"),
+        )
 
     fun product(id: ID): Product? = products[id.value]
 
@@ -40,4 +40,8 @@ class ProductsQuery : Query {
 }
 
 @KeyDirective(fields = FieldSet(value = "id"))
-data class Product(val id: ID, val name: String, val description: String? = null)
+data class Product(
+    val id: ID,
+    val name: String,
+    val description: String? = null,
+)

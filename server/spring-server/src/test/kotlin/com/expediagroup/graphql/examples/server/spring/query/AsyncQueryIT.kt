@@ -31,14 +31,16 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class AsyncQueryIT(@Autowired private val testClient: WebTestClient) {
-
+class AsyncQueryIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @Test
     fun `verify delayedEchoUsingCompletableFuture query`() {
         val query = "delayedEchoUsingCompletableFuture"
         val data = "helloUsingCompletableFuture"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
@@ -52,7 +54,8 @@ class AsyncQueryIT(@Autowired private val testClient: WebTestClient) {
         val query = "delayedEchoUsingReactorMono"
         val data = "helloUsingMono"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
@@ -66,7 +69,8 @@ class AsyncQueryIT(@Autowired private val testClient: WebTestClient) {
         val query = "delayedEchoUsingCoroutine"
         val data = "helloUsingCoroutine"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)

@@ -40,14 +40,16 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class SimpleQueryIT(@Autowired private val testClient: WebTestClient) {
-
+class SimpleQueryIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @Test
     fun `verify simpleDeprecatedQuery query`() {
         val query = "simpleDeprecatedQuery"
         val expectedData = "false"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
@@ -61,7 +63,8 @@ class SimpleQueryIT(@Autowired private val testClient: WebTestClient) {
         val query = "shinyNewQuery"
         val expectedData = "true"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
@@ -77,7 +80,8 @@ class SimpleQueryIT(@Autowired private val testClient: WebTestClient) {
         val expectedErrorTwo = "FieldUndefined"
         val expectedErrorThree = "Field 'notPartOfSchema' in type 'Query' is undefined"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
@@ -95,7 +99,8 @@ class SimpleQueryIT(@Autowired private val testClient: WebTestClient) {
         val expectedErrorTwo = "FieldUndefined"
         val expectedErrorThree = "Field 'privateFunctionsAreNotVisible' in type 'Query' is undefined"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
@@ -111,7 +116,8 @@ class SimpleQueryIT(@Autowired private val testClient: WebTestClient) {
         val query = "doSomething"
         val expectedData = "true"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
@@ -124,48 +130,60 @@ class SimpleQueryIT(@Autowired private val testClient: WebTestClient) {
     fun `verify generateNullableNumber query`() {
         val query = "generateNullableNumber"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query }")
             .exchange()
-            .expectStatus().isOk
+            .expectStatus()
+            .isOk
             .expectBody()
-            .jsonPath("$DATA_JSON_PATH.$query").value(anyOf(nullValue(), instanceOf(Integer::class.java)))
-            .jsonPath(ERRORS_JSON_PATH).doesNotExist()
-            .jsonPath(EXTENSIONS_JSON_PATH).doesNotExist()
+            .jsonPath("$DATA_JSON_PATH.$query")
+            .value(anyOf(nullValue(), instanceOf(Integer::class.java)))
+            .jsonPath(ERRORS_JSON_PATH)
+            .doesNotExist()
+            .jsonPath(EXTENSIONS_JSON_PATH)
+            .doesNotExist()
     }
 
     @Test
     fun `verify generateNumber query`() {
         val query = "generateNumber"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query }")
             .exchange()
-            .expectStatus().isOk
+            .expectStatus()
+            .isOk
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query").isNumber
+            .jsonPath("$DATA_JSON_PATH.$query")
+            .isNumber
     }
 
     @Test
     fun `verify generateList query`() {
         val query = "generateList"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("query { $query }")
             .exchange()
-            .expectStatus().isOk
+            .expectStatus()
+            .isOk
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query").isArray
-            .jsonPath("$DATA_JSON_PATH.$query").value(hasSize<Int>(10))
+            .jsonPath("$DATA_JSON_PATH.$query")
+            .isArray
+            .jsonPath("$DATA_JSON_PATH.$query")
+            .value(hasSize<Int>(10))
     }
 
     @Test
@@ -173,7 +191,8 @@ class SimpleQueryIT(@Autowired private val testClient: WebTestClient) {
         val query = "doSomethingWithOptionalInput"
         val expectedData = "required value=0, optional value=1"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
@@ -187,7 +206,8 @@ class SimpleQueryIT(@Autowired private val testClient: WebTestClient) {
         val query = "doSomethingWithOptionalInput"
         val expectedData = "required value=0, optional value=null"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)

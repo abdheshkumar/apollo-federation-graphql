@@ -26,7 +26,9 @@ import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
 @Component
-class SubQueries : Query, BeanFactoryAware {
+class SubQueries :
+    Query,
+    BeanFactoryAware {
     private lateinit var beanFactory: BeanFactory
 
     @GraphQLIgnore
@@ -36,7 +38,7 @@ class SubQueries : Query, BeanFactoryAware {
 
     @GraphQLDescription(
         """Creates a hierarchy of executable fields.
-        Arguments can be passed from `main` to the `SubQuery` via the constructor invoke by the bean factory"""
+        Arguments can be passed from `main` to the `SubQuery` via the constructor invoke by the bean factory""",
     )
     fun main(): SubQuery = beanFactory.getBean()
 }

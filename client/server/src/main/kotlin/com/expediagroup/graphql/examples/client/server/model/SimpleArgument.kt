@@ -25,5 +25,5 @@ data class SimpleArgument(
     @GraphQLDescription("Minimum value for test criteria")
     val min: Double? = null,
     @GraphQLDescription("Maximum value for test criteria")
-    val max: Double? = null
+    val max: Double? = null,
 )

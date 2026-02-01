@@ -32,20 +32,24 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestInstance(PER_CLASS)
-class ScalarMutationIT(@Autowired private val testClient: WebTestClient) {
-
+class ScalarMutationIT(
+    @Autowired private val testClient: WebTestClient,
+) {
     @Test
     fun `verify addPerson query`() {
         val query = "addPerson"
 
-        testClient.post()
+        testClient
+            .post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
             .bodyValue("mutation { $query(person: {id: \"1\", name: \"Alice\"}) { id, name } }")
             .exchange()
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.id").isEqualTo(1)
-            .jsonPath("$DATA_JSON_PATH.$query.name").isEqualTo("Alice")
+            .jsonPath("$DATA_JSON_PATH.$query.id")
+            .isEqualTo(1)
+            .jsonPath("$DATA_JSON_PATH.$query.name")
+            .isEqualTo("Alice")
     }
 }

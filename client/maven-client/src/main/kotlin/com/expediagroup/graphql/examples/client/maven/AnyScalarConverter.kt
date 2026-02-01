@@ -23,5 +23,6 @@ import com.expediagroup.graphql.client.converter.ScalarConverter
  */
 class AnyScalarConverter : ScalarConverter<Any> {
     override fun toScalar(rawValue: Any): Any = rawValue
+
     override fun toJson(value: Any): Any = value
 }

@@ -19,30 +19,39 @@ package com.expediagroup.graphql.examples.server.spring
 import org.hamcrest.core.StringContains
 import org.springframework.test.web.reactive.server.WebTestClient
 
-fun WebTestClient.ResponseSpec.verifyOnlyDataExists(expectedQuery: String): WebTestClient.BodyContentSpec {
-    return this.expectBody()
-        .jsonPath("$DATA_JSON_PATH.$expectedQuery").exists()
-        .jsonPath(ERRORS_JSON_PATH).doesNotExist()
-        .jsonPath(EXTENSIONS_JSON_PATH).doesNotExist()
-}
+fun WebTestClient.ResponseSpec.verifyOnlyDataExists(expectedQuery: String): WebTestClient.BodyContentSpec =
+    this
+        .expectBody()
+        .jsonPath("$DATA_JSON_PATH.$expectedQuery")
+        .exists()
+        .jsonPath(ERRORS_JSON_PATH)
+        .doesNotExist()
+        .jsonPath(EXTENSIONS_JSON_PATH)
+        .doesNotExist()
 
 fun WebTestClient.ResponseSpec.verifyData(
     expectedQuery: String,
-    expectedData: String
-): WebTestClient.BodyContentSpec {
-    return this.expectStatus().isOk
+    expectedData: String,
+): WebTestClient.BodyContentSpec =
+    this
+        .expectStatus()
+        .isOk
         .verifyOnlyDataExists(expectedQuery)
-        .jsonPath("$DATA_JSON_PATH.$expectedQuery").isEqualTo(expectedData)
-}
+        .jsonPath("$DATA_JSON_PATH.$expectedQuery")
+        .isEqualTo(expectedData)
 
-fun WebTestClient.ResponseSpec.verifyError(expectedErrorSubString: String): WebTestClient.BodyContentSpec {
-    return this.expectStatus().isOk
+fun WebTestClient.ResponseSpec.verifyError(expectedErrorSubString: String): WebTestClient.BodyContentSpec =
+    this
+        .expectStatus()
+        .isOk
         .expectBody()
         .verifyError(expectedErrorSubString)
-}
 
-fun WebTestClient.BodyContentSpec.verifyError(expectedErrorSubString: String): WebTestClient.BodyContentSpec {
-    return this.jsonPath(DATA_JSON_PATH).doesNotExist()
-        .jsonPath("$ERRORS_JSON_PATH.[0].message").value(StringContains.containsString(expectedErrorSubString))
-        .jsonPath(EXTENSIONS_JSON_PATH).doesNotExist()
-}
+fun WebTestClient.BodyContentSpec.verifyError(expectedErrorSubString: String): WebTestClient.BodyContentSpec =
+    this
+        .jsonPath(DATA_JSON_PATH)
+        .doesNotExist()
+        .jsonPath("$ERRORS_JSON_PATH.[0].message")
+        .value(StringContains.containsString(expectedErrorSubString))
+        .jsonPath(EXTENSIONS_JSON_PATH)
+        .doesNotExist()

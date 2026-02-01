@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 @GraphQLDescription("Use to represent a selection when choosing a value")
 enum class Selection {
-
     @GraphQLDescription("Use this when you want the first one")
     ONE,
 
@@ -30,5 +29,5 @@ enum class Selection {
     @JsonProperty("second")
     @GraphQLName("second")
     @GraphQLDescription("Use this when you want the second one")
-    TWO
+    TWO,
 }

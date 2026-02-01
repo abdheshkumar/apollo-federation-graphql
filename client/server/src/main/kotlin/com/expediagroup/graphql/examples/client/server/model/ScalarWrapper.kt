@@ -40,5 +40,5 @@ data class ScalarWrapper(
     @GraphQLDescription("Custom scalar of Locale")
     val locale: ULocale,
     @GraphQLDescription("List of custom scalar Locales")
-    val listLocale: List<ULocale>
+    val listLocale: List<ULocale>,
 )
