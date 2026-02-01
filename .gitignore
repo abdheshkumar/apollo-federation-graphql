@@ -25,3 +25,21 @@ replay_pid*
 
 # Kotlin Gradle plugin data, see https://kotlinlang.org/docs/whatsnew20.html#new-directory-for-kotlin-data-in-gradle-projects
 .kotlin/
+.claude
+.gradle
+.idea/
+.DS_Store
+build/
+out/
+federation/products-subgraph/build/
+federation/reviews-subgraph/build/
+server/ktor-server/build/
+server/spring-server/build/
+client/build/
+client/gradle-client/build/
+client/maven-client/build/
+client/maven-client/.mvn/
+client/server/build/
+client/server/.gradle/
+client/server/.idea/
+client/server/out/

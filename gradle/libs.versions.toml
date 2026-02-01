@@ -1,0 +1,71 @@
+[versions]
+graphql-kotlin = "8.8.1"
+kotlin = "2.1.0"
+kotlinx-coroutines = "1.10.1"
+kotlinx-serialization = "1.8.0"
+icu = "78.1"
+
+# Server frameworks
+spring-boot = "3.4.1"
+ktor = "3.0.3"
+
+# GraphQL Client
+kotlin-poet = "2.0.0"
+
+# Testing
+junit = "5.11.4"
+reactor-test = "3.7.1"
+wiremock = "3.10.0"
+
+# Code quality
+detekt = "1.23.7"
+ktlint-core = "1.5.0"
+ktlint-plugin = "12.1.2"
+
+[libraries]
+# Kotlin
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-junit-test = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
+
+# Kotlin Coroutines
+kotlinx-coroutines-jdk8 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-reactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactor", version.ref = "kotlinx-coroutines" }
+
+# Kotlinx Serialization
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+
+# Spring Boot
+spring-boot-validation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "spring-boot" }
+spring-boot-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "spring-boot" }
+
+# Ktor Server
+ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
+ktor-server-websockets = { module = "io.ktor:ktor-server-websockets", version.ref = "ktor" }
+ktor-server-cors = { module = "io.ktor:ktor-server-cors", version.ref = "ktor" }
+ktor-server-statuspages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
+
+# Ktor Client
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-jvm-logging = { module = "io.ktor:ktor-client-logging-jvm", version.ref = "ktor" }
+
+# Logging
+logback = { module = "ch.qos.logback:logback-classic", version = "1.5.15" }
+
+# ICU
+icu = { module = "com.ibm.icu:icu4j", version.ref = "icu" }
+
+# Testing
+reactor-test = { module = "io.projectreactor:reactor-test", version.ref = "reactor-test" }
+wiremock-standalone = { module = "org.wiremock:wiremock-standalone", version.ref = "wiremock" }
+
+# Code quality
+detekt-plugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+ktlint-plugin = { module = "org.jlleitschuh.gradle:ktlint-gradle", version.ref = "ktlint-plugin" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
