@@ -19,8 +19,9 @@
 *.tar.gz
 *.rar
 
-# Exception: Include Gradle wrapper JAR
+# Exception: Include Gradle and Maven wrapper JARs
 !gradle/wrapper/gradle-wrapper.jar
+!client/maven-client/.mvn/wrapper/maven-wrapper.jar
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
@@ -41,7 +42,6 @@ server/spring-server/build/
 client/build/
 client/gradle-client/build/
 client/maven-client/build/
-client/maven-client/.mvn/
 client/server/build/
 client/server/.gradle/
 client/server/.idea/
