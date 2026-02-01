@@ -7,3 +7,9 @@ Example apps that use `graphql-kotlin` libraries to test and demonstrate usages.
 * [server](https://github.com/ExpediaGroup/graphql-kotlin/tree/master/examples/server) - Example GraphQL Kotlin integrations with number of different server implementations
   * [ktor-server](https://github.com/ExpediaGroup/graphql-kotlin/tree/master/examples/server/ktor-server) - Example GraphQL server using Ktor
   * [spring-server](https://github.com/ExpediaGroup/graphql-kotlin/tree/master/examples/server/spring-server) - This is a sample Spring Boot app that uses `graphql-kotlin-spring-server` to create a reactive GraphQL web application. Please refer to the README file for details on how to run the application.
+
+## Building and testing
+  - **./gradlew build** - Runs with ktlint enforcement
+  - **./gradlew ktlintCheck** - Manually check code style
+  - **./gradlew ktlintFormat** - Auto-format code to fix violations
+  - **./gradlew test** - All tests pass 
