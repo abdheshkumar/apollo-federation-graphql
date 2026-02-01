@@ -1,11 +1,11 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath("com.expediagroup:graphql-kotlin-gradle-plugin:8.8.1")
-    }
+plugins {
+    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.kotlin.spring) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
+    alias(libs.plugins.spring.boot) apply false
+    alias(libs.plugins.graphql.kotlin) apply false
+    alias(libs.plugins.ktlint) apply false
+    alias(libs.plugins.detekt) apply false
 }
 
 allprojects {

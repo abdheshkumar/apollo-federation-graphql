@@ -1,32 +1,39 @@
 import com.expediagroup.graphql.plugin.gradle.config.GraphQLScalar
 import com.expediagroup.graphql.plugin.gradle.config.GraphQLSerializer
 import com.expediagroup.graphql.plugin.gradle.graphql
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 description = "Example usage of Gradle plugin to generate GraphQL Kotlin Client"
 
 plugins {
-    id("com.expediagroup.graphql.examples.conventions")
-    id("com.expediagroup.graphql")
-    application
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.graphql.kotlin)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.detekt)
+    application
 }
 
 dependencies {
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlin.reflect)
+    implementation(libs.kotlinx.coroutines.jdk8)
+    implementation(libs.icu)
     implementation("com.expediagroup:graphql-kotlin-ktor-client:${libs.versions.graphql.kotlin.get()}")
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.jvm.logging)
+    testImplementation(libs.kotlin.junit.test)
 }
 
 application {
     mainClass.set("com.expediagroup.graphql.examples.client.gradle.ApplicationKt")
 }
 
-val wireMockServerPort: Int? = ext.get("wireMockServerPort") as? Int
 graphql {
     client {
         packageName = "com.expediagroup.graphql.generated"
-        // you can also use direct sdlEndpoint instead
-        sdlEndpoint = "http://localhost:$wireMockServerPort/sdl"
+        // using direct schema file instead of HTTP endpoint
+        schemaFile = file("${project.rootProject.projectDir}/client/src/integration/wiremock/__files/schema.graphql")
 
         // optional
         allowDeprecatedFields = true
@@ -39,8 +46,33 @@ graphql {
         serializer = GraphQLSerializer.KOTLINX
     }
 }
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "17"
+        freeCompilerArgs = listOf("-Xjsr305=strict")
+    }
+}
+
+kotlin {
+    jvmToolchain(17)
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+tasks.jar {
+    enabled = false
+}
+
 ktlint {
+    version.set(libs.versions.ktlint.core.get())
     filter {
         exclude("**/generated/**")
     }
+}
+
+detekt {
+    toolVersion = libs.versions.detekt.get()
 }

@@ -1,24 +1,22 @@
 rootProject.name = "graphql-kotlin-examples"
 
-// client examples
-include(":client-examples")
-include(":client-examples:gradle-client-example")
-include(":client-examples:maven-client-example")
-include(":client-examples:server-client-example")
+// Client examples
+include("gradle-client-example")
+include("maven-client-example")
+include("server-client-example")
 
-// federation examples
-include(":federation-products-subgraph")
-include(":federation-reviews-subgraph")
+// Federation examples
+include("federation-products-subgraph")
+include("federation-reviews-subgraph")
 
-// server examples
-include(":ktor-server")
-include(":spring-server")
+// Server examples
+include("spring-server")
+include("ktor-server")
 
-// project mappings
-project(":client-examples").projectDir = file("client")
-project(":client-examples:gradle-client-example").projectDir = file("client/gradle-client")
-project(":client-examples:maven-client-example").projectDir = file("client/maven-client")
-project(":client-examples:server-client-example").projectDir = file("client/server")
+// Map to actual directories
+project(":gradle-client-example").projectDir = file("client/gradle-client")
+project(":maven-client-example").projectDir = file("client/maven-client")
+project(":server-client-example").projectDir = file("client/server")
 
 project(":federation-products-subgraph").projectDir = file("federation/products-subgraph")
 project(":federation-reviews-subgraph").projectDir = file("federation/reviews-subgraph")

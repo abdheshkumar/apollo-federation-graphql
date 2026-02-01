@@ -16,7 +16,7 @@
         <reactor.version>${reactorVersion}</reactor.version>
 
         <!-- environment settings -->
-        <graphql.endpoint>${graphqlEndpoint}</graphql.endpoint>
+        <graphql.schemaFile>${graphqlSchemaFile}</graphql.schemaFile>
     </properties>
 
     <dependencies>
@@ -63,13 +63,11 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>download-sdl</goal>
                             <goal>generate-client</goal>
                         </goals>
                         <configuration>
-                            <endpoint>${graphql.endpoint}</endpoint>
+                            <schemaFile>${graphql.schemaFile}</schemaFile>
                             <packageName>com.expediagroup.graphql.generated</packageName>
-                            <schemaFile>${project.build.directory}/schema.graphql</schemaFile>
                             <allowDeprecatedFields>true</allowDeprecatedFields>
                             <headers>
                                 <X-Custom-Header>My-Custom-Header</X-Custom-Header>
